@@ -1,0 +1,53 @@
+server:
+  port: 9090
+  shutdown: graceful
+
+spring:
+  config:
+    import:
+      - classpath:config-springdoc.yml
+      - optional:file:./secrets-local.properties
+  jackson:
+#    propertyNamingStrategy: com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy
+    property-naming-strategy: SNAKE_CASE
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+  datasource:
+    url: ${database.url}
+    username: ${database.username}
+    password: ${database.password}
+  flyway:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        batch: Info
+        jdbc.core:
+          JdbcTemplate: DEBUG
+          StatementCreatorUtils: TRACE
+    com:
+      zaxxer.hikari:
+        HikariConfig: DEBUG
+
+
+#management:
+#  endpoints:
+#    web:
+#      path-mapping:
+#        health: health-check
+
+#app:
+#  auth:
+#    service-shared-secret: ${service.shared.secret}
+#    ignore-paths: /docs, /v3/api-docs/**, /swagger-ui/**, /api-docs.yaml
+#  rest:
+#    template:
+#      connect-timeout: 15000
+#      read-timeout: 15000
+
+
+
+
