@@ -13,4 +13,9 @@ class AeronaveRepositoryImpl(
     override fun findAll(): List<Aeronave> {
         return repository.findAll().map(AeronaveTable::toDomain)
     }
+
+    override fun save(aeronave: Aeronave): Aeronave {
+        val aeronaveTable = AeronaveTable.fromDomain(aeronave)
+        return repository.save(aeronaveTable).toDomain()
+    }
 }

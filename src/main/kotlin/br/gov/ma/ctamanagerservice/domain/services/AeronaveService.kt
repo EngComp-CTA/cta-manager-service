@@ -7,4 +7,5 @@ import org.springframework.stereotype.Service
 @Service
 class AeronaveService(private val repository: AeronaveRepository) {
     fun getAll(): List<Aeronave> = repository.findAll()
+    fun save(aeronave: Aeronave) = repository.save(aeronave)
 }

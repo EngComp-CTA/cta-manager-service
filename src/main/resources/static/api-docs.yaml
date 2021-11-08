@@ -24,6 +24,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Aeronave'
+    post:
+      summary: salvar aeronave
+      operationId: salvarAeronave
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Aeronave'
+
+      tags:
+        - Aeronave
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aeronave'
 components:
   schemas:
     Aeronave:

@@ -1,33 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.5.4"
+    id("org.springframework.boot") version "2.5.5"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-//	id("org.openapi.generator") version "4.3.1"
-    id("org.openapi.generator") version "5.1.1"
+	id("org.openapi.generator") version "5.3.0"
 
     kotlin("jvm") version "1.5.21"
     kotlin("plugin.spring") version "1.5.21"
 }
 
-//configure<SourceSetContainer> {
-//    named("main") {
-//        kotlin.srcDir("$buildDir/generated/src/main/java")
-//    }
-//}
-
 group = "br.gov.ma"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
-
-sourceSets{
-    getByName("main") {
-        java {
-            srcDir("$buildDir/generated/src/main")
-        }
-    }
-}
-
+java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
@@ -51,13 +35,19 @@ dependencies {
 
     runtimeOnly("org.postgresql:postgresql")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(module = "junit")
+        exclude(module = "mockito-core")
+    }
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("com.ninja-squad:springmockk:3.0.1")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
 }
 
@@ -69,22 +59,32 @@ tasks.compileKotlin {
     dependsOn("openApiGenerate")
 }
 
+val basePackage = "br.gov.ma.ctamanagerservice"
+val pathSwagger = "$projectDir/src/main/resources/static/api-docs.yaml"
+
+sourceSets {
+    main {
+        java {
+            srcDir("$buildDir/generated/src/main")
+        }
+    }
+}
+
+
+tasks.openApiValidate {
+    inputSpec.set(pathSwagger)
+}
+
 tasks.openApiGenerate {
     generatorName.set("kotlin-spring")
-    inputSpec.set("$projectDir/src/main/resources/static/api-docs.yaml")
+    inputSpec.set(pathSwagger)
     outputDir.set("$buildDir/generated")
-    apiPackage.set("br.gov.ma.ctamanagerservice.adapters.api")
-    modelPackage.set("br.gov.ma.ctamanagerservice.adapters.dto")
-    invokerPackage.set("br.gov.ma.ctamanagerservice.adapters.invoker")
+    apiPackage.set("$basePackage.adapters.api")
+    modelPackage.set("$basePackage.adapters.dto")
     modelNameSuffix.set("Dto")
     configOptions.set(
         mapOf(
-            "dateLibrary" to "java8",
             "interfaceOnly" to "true",
-//            "delegatePattern" to "true",
-            "hideGenerationTimestamp" to "true"
         )
     )
 }
-
-//tasks.openApiValidate.inputSpec = "$projectDir/src/main/resources/static/api-docs.yaml"

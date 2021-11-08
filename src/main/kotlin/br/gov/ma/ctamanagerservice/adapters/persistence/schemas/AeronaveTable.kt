@@ -24,4 +24,21 @@ data class AeronaveTable(
         )
     )
 
+    companion object {
+        fun fromDomain(aeronave: Aeronave) = AeronaveTable(
+            id = aeronave.id,
+            marcas = "ALIBA",
+            modelo = aeronave.modelo,
+            fabricanteId = aeronave.fabricante.id,
+            numeroSerie = aeronave.numeroSerie
+        )
+    }
 }
+
+fun AeronaveTable.fromDomain2(aeronave: Aeronave) = AeronaveTable(
+    id = aeronave.id,
+    marcas = aeronave.marcas.toString(),
+    modelo = aeronave.modelo,
+    fabricanteId = aeronave.fabricante.id,
+    numeroSerie = aeronave.numeroSerie
+)
