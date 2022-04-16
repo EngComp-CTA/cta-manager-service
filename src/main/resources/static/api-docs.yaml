@@ -4,12 +4,100 @@ info:
   title: CTA Manager
   description: API para operações no CTA
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:9090
     description: local
 tags:
   - name: Aeronave
 paths:
-  /aeronaves:
+  /fabricante:
+    get:
+      summary: Buscar os fabricantes de aeronaves
+      operationId: buscarFabricantes
+      tags:
+        - Aeronave
+      responses:
+        200:
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fabricante'
+    post:
+      summary: Salvar os fabricantes de aeronaves
+      operationId: adicionarFabricante
+      tags:
+        - Aeronave
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fabricante'
+      responses:
+        200:
+          description: Criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fabricante'
+        405:
+          description: Parametro inválido
+    put:
+      summary: atualizar fabricante de aeronaves
+      operationId: atualizarFabricante
+      tags:
+        - Aeronave
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fabricante'
+      responses:
+        200:
+          description: Criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fabricante'
+        405:
+          description: Parametro inválido
+  /fabricante/{fabricanteId}:
+    parameters:
+      - name: fabricanteId
+        in: path
+        description: ID do Fabricante
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Aeronave
+      summary: Buscar um fabricante de aeronaves por Id
+      operationId: buscarFabricantePorId
+      responses:
+        200:
+          description: Fabricante encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fabricante'
+        404:
+          description: Fabricante nao encontrado
+    delete:
+      summary: Remover um fabricantes de aeronave por Id
+      operationId: removerFabricante
+      tags:
+        - Aeronave
+      responses:
+        204:
+          description: Fabricante removido com sucesso
+        404:
+          description: Fabricante nao encontrado
+  /aeronave:
     get:
       summary: Buscar todas as aeronaves
       operationId: buscarAeronaves
@@ -33,7 +121,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Aeronave'
-
       tags:
         - Aeronave
       responses:
@@ -45,6 +132,15 @@ paths:
                 $ref: '#/components/schemas/Aeronave'
 components:
   schemas:
+    Fabricante:
+      required:
+        - nome
+      properties:
+        id:
+          type: integer
+          format: int64
+        nome:
+          type: string
     Aeronave:
       required:
         - marcas

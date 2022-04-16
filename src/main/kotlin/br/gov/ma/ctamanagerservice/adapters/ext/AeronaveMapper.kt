@@ -3,6 +3,7 @@ package br.gov.ma.ctamanagerservice.adapters.ext
 import br.gov.ma.ctamanagerservice.adapters.dto.AeronaveDto
 import br.gov.ma.ctamanagerservice.domain.entities.*
 
+
 fun Aeronave.mapToDto(): AeronaveDto {
     return AeronaveDto(
         id = id,
@@ -16,12 +17,14 @@ fun Aeronave.mapToDto(): AeronaveDto {
 fun AeronaveDto.mapToDomain(): Aeronave {
     return Aeronave(
         id = 0,
-        numeroSerie = numeroSerie!!,
-        modelo = modelo!!,
-        fabricante = Fabricante(id = 1, descricao = "helio"),
+        apelido = "",
+        categoria = "",
         marcas = Marcas(
             marcaMatricula = MarcaMatricula(descricao = marcas),
             marcaNacionalidade = MarcaNacionalidade.PP
-        )
+        ),
+        fabricante = Fabricante(id = 1, nome = "helio"),
+        modelo = modelo!!,
+        numeroSerie = numeroSerie!!,
     )
 }

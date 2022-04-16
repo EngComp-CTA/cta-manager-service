@@ -4,7 +4,7 @@ springdoc:
     packagesToScan: ""
     show-actuator: true
   swagger-ui:
-    enabled: "${springdoc.api-docs.enabled}"
+    enabled: "${springdoc.api-docs.enabled:true}"
     path: /docs
     url: /api-docs.yaml
     disable-swagger-default-url: true

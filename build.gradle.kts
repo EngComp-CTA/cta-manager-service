@@ -1,9 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.5.5"
+    id("org.springframework.boot") version "2.6.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	id("org.openapi.generator") version "5.3.0"
+//    id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
 
     kotlin("jvm") version "1.5.21"
     kotlin("plugin.spring") version "1.5.21"
@@ -17,6 +18,11 @@ repositories {
     mavenCentral()
 }
 
+val testcontainersVersion = "1.16.2"
+val postgresVersion = "42.2.14"
+val junitJupiterVersion = "5.8.2"
+extra["testcontainersVersion"] = "1.16.2"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
@@ -26,20 +32,30 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
 
 
-    implementation("org.springdoc:springdoc-openapi-ui:1.5.10")
-    implementation("io.swagger.parser.v3:swagger-parser:2.0.20")
-    implementation("org.openapitools:jackson-databind-nullable:0.2.1")
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
+    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+
+    implementation("org.postgresql:postgresql:$postgresVersion")
+
+//    springdoc-openapi-kotlin
+//    implementation("org.springdoc:springdoc-openapi-ui:1.5.10")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.6.7")
+//    implementation("io.swagger.parser.v3:swagger-parser:2.0.20")
+//    implementation("org.openapitools:jackson-databind-nullable:0.2.1")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    runtimeOnly("org.postgresql:postgresql")
+//    runtimeOnly("org.postgresql:postgresql")
+//    runtimeOnly("com.h2database:h2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
         exclude(module = "mockito-core")
     }
-    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("com.ninja-squad:springmockk:3.0.1")
 }
@@ -65,11 +81,10 @@ val pathSwagger = "$projectDir/src/main/resources/static/api-docs.yaml"
 sourceSets {
     main {
         java {
-            srcDir("$buildDir/generated/src/main")
+            srcDir("$buildDir/generated/src/main/kotlin")
         }
     }
 }
-
 
 tasks.openApiValidate {
     inputSpec.set(pathSwagger)

@@ -3,7 +3,7 @@ package br.gov.ma.ctamanagerservice.domain.valueobjects;
 
 import br.gov.ma.ctamanagerservice.domain.exceptions.InvalidNameException;
 
-public class Name implements Comparable<Name> {
+public class Name3 implements Comparable<Name3> {
     private String value;
 
     private int minSize;
@@ -11,19 +11,19 @@ public class Name implements Comparable<Name> {
     private int minNumberOfWords;
     private int maxNumberOfWords;
 
-    Name() {
+    Name3() {
 
     }
 
-    public Name(String value) {
+    public Name3(String value) {
         this(value, 5, 2);
     }
 
-    public Name(String value, int minSize, int minNumberOfWords) {
+    public Name3(String value, int minSize, int minNumberOfWords) {
         this(value, minSize, minNumberOfWords, 255, 6);
     }
 
-    public Name(String value, int minSize, int minNumberOfWords, int maxSize, int maxNumberOfWords) {
+    public Name3(String value, int minSize, int minNumberOfWords, int maxSize, int maxNumberOfWords) {
         this.minSize = minSize;
         this.minNumberOfWords = minNumberOfWords;
         this.maxSize = maxSize;
@@ -55,7 +55,7 @@ public class Name implements Comparable<Name> {
     }
 
     @Override
-    public int compareTo(Name o) {
+    public int compareTo(Name3 o) {
         return value.compareTo(o.value);
     }
 

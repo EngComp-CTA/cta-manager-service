@@ -1,6 +1,6 @@
 package br.gov.ma.ctamanagerservice.adapters.api.controllers
 
-import br.gov.ma.ctamanagerservice.adapters.api.AeronavesApi
+import br.gov.ma.ctamanagerservice.adapters.api.AeronaveApi
 import br.gov.ma.ctamanagerservice.adapters.dto.AeronaveDto
 import br.gov.ma.ctamanagerservice.adapters.ext.mapToDomain
 import br.gov.ma.ctamanagerservice.adapters.ext.mapToDto
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AeronaveController(
     private val aeronaveService: AeronaveService
-) : AeronavesApi {
+) : AeronaveApi {
 
     override fun buscarAeronaves(): ResponseEntity<List<AeronaveDto>> {
         val list = aeronaveService.getAll().map(Aeronave::mapToDto)

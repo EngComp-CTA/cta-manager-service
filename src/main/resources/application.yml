@@ -8,16 +8,23 @@ spring:
       - classpath:config-springdoc.yml
       - optional:file:./secrets-local.properties
   jackson:
-#    propertyNamingStrategy: com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy
     property-naming-strategy: SNAKE_CASE
     serialization:
       FAIL_ON_EMPTY_BEANS: false
-  datasource:
-    url: ${database.url}
-    username: ${database.username}
-    password: ${database.password}
+#  datasource:
+#    url: ${database.url}
+#    username: ${database.username}
+#    password: ${database.password}
+#    url: jdbc:h2:file:/data/demo
+#    url: jdbc:h2:mem:mydb
+#    username: sa
+#    password: password
+#    driverClassName: org.h2.Driver
   flyway:
     enabled: true
+#  h2:
+#    console:
+#      enabled: true
 
 logging:
   level:

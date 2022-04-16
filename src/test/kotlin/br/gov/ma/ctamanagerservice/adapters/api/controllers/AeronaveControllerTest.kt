@@ -22,10 +22,12 @@ internal class AeronaveControllerTest(@Autowired val mockMvc: MockMvc) {
     fun `Quando chamar o metodo buscarAeronaves, deve retornar uma lista de AeronavesDto`() {
         val aeronave = Aeronave(
             1L,
+            "falcao",
             Marcas(MarcaNacionalidade.PP, MarcaMatricula("matricula")),
             Fabricante(2L, "fabricante"),
             "MODELO",
-            "NUMERO-SERIE"
+            "NUMERO-SERIE",
+            "SAE"
         )
         every { aeronaveService.getAll() } returns listOf(aeronave)
 
@@ -37,9 +39,5 @@ internal class AeronaveControllerTest(@Autowired val mockMvc: MockMvc) {
 //            .andExpect(jsonPath("\$.[1].fabricante").value(aeronave.fabricante))
             .andExpect(jsonPath("\$.[0].modelo").value(aeronave.modelo))
             .andExpect(jsonPath("\$.[0].numero_serie").value(aeronave.numeroSerie))
-
-
-
-
     }
 }
