@@ -1,9 +1,9 @@
 version: '3.7'
 services:
-  db-cta-manager:
+  db:
     image: postgres:12-alpine
     ports:
-      - 5440:5432
+      - "5440:5432"
     environment:
       - POSTGRES_USER=cta-manager-service
       - POSTGRES_PASSWORD=cta-manager-service

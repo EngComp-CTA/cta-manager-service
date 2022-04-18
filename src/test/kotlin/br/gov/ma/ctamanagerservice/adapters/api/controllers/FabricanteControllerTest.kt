@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
+private const val FABRICANTE_PATH = "/fabricante"
 @WebMvcTest(FabricanteController::class)
 internal class FabricanteControllerTest(@Autowired val mockMvc: MockMvc) {
 
@@ -28,7 +29,23 @@ internal class FabricanteControllerTest(@Autowired val mockMvc: MockMvc) {
         )
         every { fabricanteService.recuperarPorId(fabricanteId) } returns fabricante
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/fabricante/$fabricanteId").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.get("$FABRICANTE_PATH/$fabricanteId").accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("\$.id").value(fabricante.id))
+            .andExpect(MockMvcResultMatchers.jsonPath("\$.nome").value(fabricante.nome))
+    }
+
+    @Test
+    fun `Quando chamar o metodo recuperar todos, deve retornar um fabricante`() {
+        val fabricanteId = 10L;
+        val fabricante = Fabricante(
+            id = fabricanteId,
+            nome = "Helibras"
+        )
+        every { fabricanteService.recuperarPorId(fabricanteId) } returns fabricante
+
+        mockMvc.perform(MockMvcRequestBuilders.get("$FABRICANTE_PATH/$fabricanteId").accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.id").value(fabricante.id))
@@ -40,7 +57,7 @@ internal class FabricanteControllerTest(@Autowired val mockMvc: MockMvc) {
         val fabricanteId = 1L;
         every { fabricanteService.recuperarPorId(fabricanteId) } throws NotFoundException(msg = "fabricante nao encontrado")
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/fabricante/$fabricanteId").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.get("$FABRICANTE_PATH/$fabricanteId").accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 }
