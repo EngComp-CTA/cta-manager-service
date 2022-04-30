@@ -23,15 +23,15 @@ internal class AeronaveControllerTest(@Autowired val mockMvc: MockMvc) {
         val aeronave = Aeronave(
             1L,
             "falcao",
-            Marcas(MarcaNacionalidade.PP, MarcaMatricula("matricula")),
+            Marcas(MarcaNacionalidade.PP, "matricula"),
             Fabricante(2L, "fabricante"),
             "MODELO",
-            "NUMERO-SERIE",
+            1234,
             "SAE"
         )
         every { aeronaveService.getAll() } returns listOf(aeronave)
 
-        mockMvc.perform(get("/aeronaves").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/aeronave").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("\$.[0].id").value(aeronave.id))

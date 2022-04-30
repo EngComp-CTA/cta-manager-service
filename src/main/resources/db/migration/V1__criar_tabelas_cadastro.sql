@@ -36,12 +36,7 @@ create table if not exists aeronave_horimetro
 comment on column aeronave_horimetro.total_voo is 'total de horas de voo em decimal';
 comment on column aeronave_horimetro.total_manutencao is 'total de horas de manutencao em decimal';
 
-
 INSERT INTO fabricante (nome) VALUES ('HELIBRÁS');
-INSERT INTO aeronave (marcas, fabricante_id, modelo, numero_serie, categoria_registro, apelido)
- VALUES ('PPJJJ', 1, 'AS350B2', '4856', 'ADE', 'Aguia');
-INSERT INTO aeronave_horimetro (aeronave_id, total_voo, total_manutencao, atualizado_em)
- VALUES (1, 1.0, 2.0, now());
 
 create table if not exists pessoa
 (

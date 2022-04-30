@@ -5,7 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	id("org.openapi.generator") version "5.3.0"
 //    id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
-//    id("com.coditory.integration-test") version "1.3.0"
+    id("com.coditory.integration-test") version "1.3.0"
 
     kotlin("jvm") version "1.5.21"
     kotlin("plugin.spring") version "1.5.21"
@@ -18,31 +18,6 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 repositories {
     mavenCentral()
 }
-
-sourceSets {
-    create("integrationTest") {
-        compileClasspath += sourceSets.main.get().output
-        //+ sourceSets.test.get().output
-        runtimeClasspath += sourceSets.main.get().output
-        //+ sourceSets.test.get().output
-    }
-}
-val integrationTestImplementation by configurations.getting {
-    extendsFrom(configurations.implementation.get())
-//    extendsFrom(configurations.testImplementation.get())
-}
-configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
-
-val integrationTest = task<Test>("integrationTest") {
-    description = "Runs integration tests."
-    group = "verification"
-
-    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
-    classpath = sourceSets["integrationTest"].runtimeClasspath
-    shouldRunAfter("test")
-}
-
-tasks.check { dependsOn(integrationTest) }
 
 val testcontainersVersion = "1.16.2"
 val postgresVersion = "42.2.14"
@@ -69,13 +44,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    integrationTestImplementation("org.springframework.boot:spring-boot-starter-test") {
+    integrationImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
         exclude(module = "mockito-core")
     }
-    integrationTestImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
-    integrationTestImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
-    integrationTestImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    integrationImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    integrationImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
+    integrationImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")

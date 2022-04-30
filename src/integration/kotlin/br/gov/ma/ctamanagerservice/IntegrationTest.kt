@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.jdbc.JdbcTestUtils.deleteFromTables
 import org.testcontainers.containers.JdbcDatabaseContainer
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
@@ -33,6 +34,7 @@ import org.testcontainers.utility.DockerImageName
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
+private const val PATH_FABRICANTE = "/api/v1/fabricante"
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Testcontainers
 internal class IntegrationTest(
@@ -53,7 +55,7 @@ internal class IntegrationTest(
 
     @BeforeEach
     fun setup() {
-//        deleteFromTables(jdbc, "fabricante")
+        deleteFromTables(jdbc, "fabricante")
 //        fabricanteRepository.deleteAll()
     }
 
@@ -77,40 +79,11 @@ internal class IntegrationTest(
 
     @Test
     fun `dado um fabricante novo, quando enviar POST, deve retornar o fabricante salvo e 200_OK `() {
-        val aeronaves = aeronaveRepository.findAll()
-        val first = aeronaves.first()
-        val newAero1 = first.copy(
-            id = 0L,
-            horimetro = null
-        )
-
-        val new2 = first.copy(
-            id = 0L,
-            horimetro = AeronaveHorimetro(
-                aeronaveId = 2,
-                totalVoo = BigDecimal.TEN,
-                totalManutencao = BigDecimal.ZERO,
-                atualizadoEm = LocalDateTime.now()
-            )
-        )
-        val salved = aeronaveRepository.save(newAero1)
-        val salved2 = aeronaveRepository.save(new2)
-        val salved3 = aeronaveRepository.save(salved2.copy(
-            apelido = "salvou novo",
-            horimetro = AeronaveHorimetro(
-                aeronaveId = salved2.id,
-                totalVoo = BigDecimal.ONE,
-                totalManutencao = BigDecimal.ONE,
-                atualizadoEm = LocalDateTime.now()
-            )
-        ))
-        val get = aeronaveGatewayImpl.buscarTodos()
-
         println("JDBC CONTAINER ${container.jdbcUrl}")
         val novoFabricante = FabricanteDto(
             nome = "Helibras"
         )
-        val entity = client.postForEntity<FabricanteDto>("/fabricante", novoFabricante)
+        val entity = client.postForEntity<FabricanteDto>(PATH_FABRICANTE, novoFabricante)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).isNotNull
         assertThat(entity.body?.nome).isEqualTo(novoFabricante.nome)
@@ -119,7 +92,7 @@ internal class IntegrationTest(
     @Test
     fun `quando enviar POST com parametro invalido, deve retornar 400_BAD_REQUEST`() {
         val entidadeInvalida = mapOf("parametroInvalido" to 2L)
-        val entity = client.postForEntity<String>("/fabricante", entidadeInvalida)
+        val entity = client.postForEntity<String>(PATH_FABRICANTE, entidadeInvalida)
         println(entity)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
@@ -135,7 +108,7 @@ internal class IntegrationTest(
         ).toDomain()
         val nomeAtualizado = "HELIBRAS ATUALIZADO"
         val entity = client.exchange<FabricanteDto>(
-            url = "/fabricante",
+            url = PATH_FABRICANTE,
             method = HttpMethod.PUT,
             requestEntity = HttpEntity(fabricante.mapToDto().copy(nome = nomeAtualizado))
         )
@@ -154,14 +127,14 @@ internal class IntegrationTest(
             )
         ).toDomain()
 
-        val entity = client.getForEntity<FabricanteDto>("/fabricante/${fabricante.id}")
+        val entity = client.getForEntity<FabricanteDto>("$PATH_FABRICANTE/${fabricante.id}")
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).isEqualTo(fabricante.mapToDto())
     }
 
     @Test
     fun `dado um ID inválido, quando enviar GET com ID, deve retornar 404_NOT_FOUND`() {
-        val entity = client.getForEntity<String>("/fabricante/1000")
+        val entity = client.getForEntity<String>("$PATH_FABRICANTE/1000")
         assertThat(entity.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 
@@ -182,7 +155,7 @@ internal class IntegrationTest(
 
         fabricanteRepository.saveAll(fabricantes)
 
-        val response = client.getForEntity<List<FabricanteDto>>("/fabricante")
+        val response = client.getForEntity<List<FabricanteDto>>(PATH_FABRICANTE)
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.body).hasSize(fabricantes.size)
     }
@@ -197,13 +170,13 @@ internal class IntegrationTest(
             )
         ).toDomain()
 
-        val response = client.exchange<String>("/fabricante/${fabricante.id}", HttpMethod.DELETE)
+        val response = client.exchange<String>("$PATH_FABRICANTE/${fabricante.id}", HttpMethod.DELETE)
         assertThat(response.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
     }
 
     @Test
     fun `dado um ID inválido, quando enviar DELETE com ID, deve retornar 400_BAD_REQUEST`() {
-        val response = client.exchange<String>("/fabricante/2000", HttpMethod.DELETE)
+        val response = client.exchange<String>("$PATH_FABRICANTE/2000", HttpMethod.DELETE)
         assertThat(response.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 }
