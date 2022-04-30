@@ -4,6 +4,7 @@ import br.gov.ma.ctamanagerservice.adapters.api.FabricanteApi
 import br.gov.ma.ctamanagerservice.adapters.dto.FabricanteDto
 import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
 import br.gov.ma.ctamanagerservice.domain.services.FabricanteService
+import org.slf4j.LoggerFactory.getLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
@@ -11,7 +12,13 @@ import org.springframework.web.bind.annotation.RestController
 class FabricanteController(
     private val fabricanteService: FabricanteService
 ) : FabricanteApi {
+
+    companion object {
+        private val log = getLogger(FabricanteController::class.java)
+    }
+
     override fun adicionarFabricante(fabricanteDto: FabricanteDto): ResponseEntity<FabricanteDto> {
+        log.info("adicionando novo fabricante $fabricanteDto")
         val novoFabricante = fabricanteDto.mapToDomain()
         return ResponseEntity.ok(
             fabricanteService.salvar(novoFabricante).mapToDto()
@@ -19,12 +26,14 @@ class FabricanteController(
     }
 
     override fun atualizarFabricante(fabricanteDto: FabricanteDto): ResponseEntity<FabricanteDto> {
+        log.info("adicionando novo fabricante $fabricanteDto")
         return ResponseEntity.ok(
             fabricanteService.atualizar(fabricanteDto.mapToDomain()).mapToDto()
         )
     }
 
     override fun buscarFabricantePorId(fabricanteId: Long): ResponseEntity<FabricanteDto> {
+        log.info("buscando fabricando por id $fabricanteId")
         return ResponseEntity.ok(
             fabricanteService.recuperarPorId(fabricanteId).mapToDto()
         )
@@ -43,12 +52,12 @@ class FabricanteController(
 
 }
 
-internal fun Fabricante.mapToDto(): FabricanteDto = FabricanteDto(
+fun Fabricante.mapToDto(): FabricanteDto = FabricanteDto(
     id = id,
     nome = nome
 )
 
-internal fun FabricanteDto.mapToDomain(): Fabricante = Fabricante(
+fun FabricanteDto.mapToDomain(): Fabricante = Fabricante(
     id = id ?: 0L,
     nome = nome
 )

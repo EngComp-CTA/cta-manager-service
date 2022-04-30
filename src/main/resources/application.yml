@@ -31,6 +31,7 @@ logging:
       zaxxer.hikari:
         HikariConfig: DEBUG
 
+debug: true
 
 #management:
 #  endpoints:

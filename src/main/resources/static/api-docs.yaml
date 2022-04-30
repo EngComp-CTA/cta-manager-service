@@ -4,8 +4,16 @@ info:
   title: CTA Manager
   description: API para operações no CTA
 servers:
-  - url: http://localhost:9090
+  - url: http://localhost:9090/api/v1/
     description: local
+  - url: https://{environment}.example.com/v2
+    variables:
+      environment:
+        default: api    # Production server
+        enum:
+          - api         # Production server
+          - api.dev     # Development server
+          - api.staging # Staging server
 tags:
   - name: Aeronave
 paths:
@@ -30,11 +38,7 @@ paths:
       tags:
         - Aeronave
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Fabricante'
+        $ref: '#/components/requestBodies/FabricanteBody'
       responses:
         200:
           description: Criado com sucesso
@@ -50,11 +54,7 @@ paths:
       tags:
         - Aeronave
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Fabricante'
+        $ref: '#/components/requestBodies/FabricanteBody'
       responses:
         200:
           description: Criado com sucesso
@@ -130,6 +130,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Aeronave'
+  /aeronave/horimetro:
+    post:
+      summary: Buscar todas as aeronaves com horimetro
+      operationId: buscarAeronavesHorimetro
+      tags:
+        - Aeronave
+      requestBody:
+        $ref: '#/components/requestBodies/HorimetroBody'
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Horimetros'
 components:
   schemas:
     Fabricante:
@@ -157,3 +172,58 @@ components:
           type: string
         numero_serie:
           type: string
+    Horimetro:
+      properties:
+        hora_total:
+          type: string
+          format: date
+        hora_manutencao:
+          type: string
+          format: date-time
+        hora_total_dec:
+          type: number
+          format: float
+        hora_manutencao_dec:
+          type: number
+          format: double
+    Horimetros:
+      type: array
+      items:
+        $ref: '#/components/schemas/Horimetro'
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+  requestBodies:
+    HorimetroBody:
+      description: A JSON object containing pet information
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Horimetro'
+    FabricanteBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Fabricante'
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

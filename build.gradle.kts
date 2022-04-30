@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	id("org.openapi.generator") version "5.3.0"
 //    id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
+//    id("com.coditory.integration-test") version "1.3.0"
 
     kotlin("jvm") version "1.5.21"
     kotlin("plugin.spring") version "1.5.21"
@@ -18,10 +19,36 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    create("integrationTest") {
+        compileClasspath += sourceSets.main.get().output
+        //+ sourceSets.test.get().output
+        runtimeClasspath += sourceSets.main.get().output
+        //+ sourceSets.test.get().output
+    }
+}
+val integrationTestImplementation by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+//    extendsFrom(configurations.testImplementation.get())
+}
+configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
+
+val integrationTest = task<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+    classpath = sourceSets["integrationTest"].runtimeClasspath
+    shouldRunAfter("test")
+}
+
+tasks.check { dependsOn(integrationTest) }
+
 val testcontainersVersion = "1.16.2"
 val postgresVersion = "42.2.14"
 val junitJupiterVersion = "5.8.2"
 extra["testcontainersVersion"] = "1.16.2"
+//val springDocVersion = "1.6.7"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -30,12 +57,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.flywaydb:flyway-core")
-
-
-    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
-    testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
-    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
-
     implementation("org.postgresql:postgresql:$postgresVersion")
 
 //    springdoc-openapi-kotlin
@@ -48,8 +69,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-//    runtimeOnly("org.postgresql:postgresql")
-//    runtimeOnly("com.h2database:h2")
+    integrationTestImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(module = "junit")
+        exclude(module = "mockito-core")
+    }
+    integrationTestImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    integrationTestImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
+    integrationTestImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
@@ -58,6 +84,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("com.ninja-squad:springmockk:3.0.1")
+//    testImplementation("io.mockk:mockk:1.10.2")
 }
 
 tasks.withType<KotlinCompile> {
@@ -100,6 +127,7 @@ tasks.openApiGenerate {
     configOptions.set(
         mapOf(
             "interfaceOnly" to "true",
+            "gradleBuildFile" to "false"
         )
     )
 }

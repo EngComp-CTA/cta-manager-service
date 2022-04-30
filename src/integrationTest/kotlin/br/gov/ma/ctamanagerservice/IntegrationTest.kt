@@ -1,6 +1,9 @@
 package br.gov.ma.ctamanagerservice
 
 import br.gov.ma.ctamanagerservice.adapters.api.controllers.mapToDto
+import br.gov.ma.ctamanagerservice.adapters.db.AeronaveGatewayImpl
+import br.gov.ma.ctamanagerservice.adapters.db.jdbc.AeronaveRepository
+import br.gov.ma.ctamanagerservice.adapters.db.jdbc.AeronaveHorimetro
 import br.gov.ma.ctamanagerservice.adapters.db.jdbc.FabricanteRepository
 import br.gov.ma.ctamanagerservice.adapters.db.jdbc.fromDomain
 import br.gov.ma.ctamanagerservice.adapters.dto.FabricanteDto
@@ -19,6 +22,7 @@ import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.JdbcDatabaseContainer
@@ -26,14 +30,21 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
+import java.math.BigDecimal
+import java.time.LocalDateTime
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Testcontainers
 internal class IntegrationTest(
-    @Autowired val client: TestRestTemplate
+    @Autowired val client: TestRestTemplate,
+    @Autowired val jdbc: JdbcTemplate
 ) {
     @Autowired
     private lateinit var fabricanteRepository: FabricanteRepository
+    @Autowired
+    private lateinit var aeronaveRepository: AeronaveRepository
+    @Autowired
+    private lateinit var aeronaveGatewayImpl: AeronaveGatewayImpl
 
     @AfterEach
     fun cleanup() {
@@ -42,7 +53,8 @@ internal class IntegrationTest(
 
     @BeforeEach
     fun setup() {
-        fabricanteRepository.deleteAll()
+//        deleteFromTables(jdbc, "fabricante")
+//        fabricanteRepository.deleteAll()
     }
 
     companion object {
@@ -51,6 +63,7 @@ internal class IntegrationTest(
             withDatabaseName("cta-manager-service")
             withUsername("cta-manager-service")
             withPassword("cta-manager-service")
+//            withExposedPorts(6379)
         }
 
         @JvmStatic
@@ -64,6 +77,36 @@ internal class IntegrationTest(
 
     @Test
     fun `dado um fabricante novo, quando enviar POST, deve retornar o fabricante salvo e 200_OK `() {
+        val aeronaves = aeronaveRepository.findAll()
+        val first = aeronaves.first()
+        val newAero1 = first.copy(
+            id = 0L,
+            horimetro = null
+        )
+
+        val new2 = first.copy(
+            id = 0L,
+            horimetro = AeronaveHorimetro(
+                aeronaveId = 2,
+                totalVoo = BigDecimal.TEN,
+                totalManutencao = BigDecimal.ZERO,
+                atualizadoEm = LocalDateTime.now()
+            )
+        )
+        val salved = aeronaveRepository.save(newAero1)
+        val salved2 = aeronaveRepository.save(new2)
+        val salved3 = aeronaveRepository.save(salved2.copy(
+            apelido = "salvou novo",
+            horimetro = AeronaveHorimetro(
+                aeronaveId = salved2.id,
+                totalVoo = BigDecimal.ONE,
+                totalManutencao = BigDecimal.ONE,
+                atualizadoEm = LocalDateTime.now()
+            )
+        ))
+        val get = aeronaveGatewayImpl.buscarTodos()
+
+        println("JDBC CONTAINER ${container.jdbcUrl}")
         val novoFabricante = FabricanteDto(
             nome = "Helibras"
         )

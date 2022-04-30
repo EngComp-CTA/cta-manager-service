@@ -176,17 +176,3 @@ create table if not exists diario_bordo_aprovacao
             references aeronauta (id),
     acao_corretiva  text    not null
 );
-
-create table if not exists aeronave_horimetro
-(
-    aeronave_id       integer       not null
-        constraint aeronave_horimetro_pk
-            primary key
-        constraint aeronave_horimetro_aeronave_id_fk
-            references aeronave,
-    total_voo         numeric(6, 1) not null,
-    total_manuntencao numeric(6, 1) not null,
-    atualizado_em     timestamp     not null
-);
-comment on column aeronave_horimetro.total_voo is 'total de horas de voo em decimal';
-comment on column aeronave_horimetro.total_manuntencao is 'total de horas de manuntencao em decimal';

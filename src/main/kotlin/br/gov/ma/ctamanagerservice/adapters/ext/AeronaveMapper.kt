@@ -7,7 +7,7 @@ import br.gov.ma.ctamanagerservice.domain.entities.*
 fun Aeronave.mapToDto(): AeronaveDto {
     return AeronaveDto(
         id = id,
-        numeroSerie = numeroSerie,
+        numeroSerie = numeroSerie.toString(),
         modelo = modelo,
         fabricante = fabricante.toString(),
         marcas = marcas.toString()
@@ -20,11 +20,11 @@ fun AeronaveDto.mapToDomain(): Aeronave {
         apelido = "",
         categoria = "",
         marcas = Marcas(
-            marcaMatricula = MarcaMatricula(descricao = marcas),
+            marcaMatricula = marcas,
             marcaNacionalidade = MarcaNacionalidade.PP
         ),
         fabricante = Fabricante(id = 1, nome = "helio"),
         modelo = modelo!!,
-        numeroSerie = numeroSerie!!,
+        numeroSerie = numeroSerie!!.toInt(),
     )
 }

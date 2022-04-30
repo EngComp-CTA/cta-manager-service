@@ -5,6 +5,7 @@ import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
 import br.gov.ma.ctamanagerservice.domain.services.FabricanteService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -13,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
-private const val FABRICANTE_PATH = "/fabricante"
+private const val FABRICANTE_PATH = "/api/v1/fabricante"
 @WebMvcTest(FabricanteController::class)
 internal class FabricanteControllerTest(@Autowired val mockMvc: MockMvc) {
 
@@ -34,6 +35,9 @@ internal class FabricanteControllerTest(@Autowired val mockMvc: MockMvc) {
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.id").value(fabricante.id))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.nome").value(fabricante.nome))
+
+
+        Assertions.assertTrue(true)
     }
 
     @Test

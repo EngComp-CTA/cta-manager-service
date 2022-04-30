@@ -6,9 +6,11 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.repository.CrudRepository
 
+const val FABRICANTE_TABLE = "fabricante"
+
 interface FabricanteRepository : CrudRepository<FabricanteTable, Long>
 
-@Table("fabricante")
+@Table(FABRICANTE_TABLE)
 data class FabricanteTable(
     @Id private val id: Long,
     @Column private val nome: String
