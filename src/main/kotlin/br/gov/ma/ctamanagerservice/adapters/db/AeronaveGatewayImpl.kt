@@ -17,7 +17,7 @@ class AeronaveGatewayImpl(
     override fun buscarTodos(): List<Aeronave> {
         return repository.findAll().map {
             it.toDomain { fabricanteId ->
-                fabricanteRepository.findByIdOrNull(fabricanteId)?.toDomain()
+                fabricanteRepository.findByIdOrNull(fabricanteId)!!.toDomain()
             }
         }
     }

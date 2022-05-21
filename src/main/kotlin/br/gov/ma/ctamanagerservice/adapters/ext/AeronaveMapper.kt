@@ -1,16 +1,20 @@
 package br.gov.ma.ctamanagerservice.adapters.ext
 
+import br.gov.ma.ctamanagerservice.adapters.api.controllers.mapToDto
 import br.gov.ma.ctamanagerservice.adapters.dto.AeronaveDto
+import br.gov.ma.ctamanagerservice.adapters.dto.AeronaveDto.CategoriaRegistro
 import br.gov.ma.ctamanagerservice.domain.entities.*
 
 
 fun Aeronave.mapToDto(): AeronaveDto {
     return AeronaveDto(
         id = id,
-        numeroSerie = numeroSerie.toString(),
+        numeroSerie = numeroSerie,
         modelo = modelo,
-        fabricante = fabricante.toString(),
-        marcas = marcas.toString()
+        fabricante = fabricante.mapToDto(),
+        marcas = marcas.toString(),
+        apelido = apelido,
+        categoriaRegistro = CategoriaRegistro.valueOf(categoria)
     )
 }
 

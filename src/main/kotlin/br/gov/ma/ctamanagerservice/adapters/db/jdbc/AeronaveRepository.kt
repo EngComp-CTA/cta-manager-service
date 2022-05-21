@@ -32,7 +32,7 @@ data class AeronaveTable(
 //    @Column private val fabricanteId: AggregateReference<FabricanteTable, Long>,
     @Column("aeronave_id") private val horimetro: AeronaveHorimetro? = null
 ) {
-    fun toDomain(getFabricante: (idFabricante: Long) -> Fabricante?) = Aeronave(
+    fun toDomain(getFabricante: (idFabricante: Long) -> Fabricante) = Aeronave(
         id = id,
         apelido = apelido,
         marcas = marcas.let {
@@ -42,7 +42,7 @@ data class AeronaveTable(
             )
         },
         fabricante = fabricanteId.let {
-            getFabricante(it) ?: Fabricante(it, nome = "")
+            getFabricante(it)
         },
         modelo = modelo,
         numeroSerie = numeroSerie,

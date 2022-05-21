@@ -22,6 +22,7 @@ repositories {
 val testcontainersVersion = "1.16.2"
 val postgresVersion = "42.2.14"
 val junitJupiterVersion = "5.8.2"
+val restAssuredVersion = "5.0.1"
 extra["testcontainersVersion"] = "1.16.2"
 //val springDocVersion = "1.6.7"
 
@@ -51,6 +52,10 @@ dependencies {
     integrationImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     integrationImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
     integrationImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    integrationImplementation("io.rest-assured:rest-assured:$restAssuredVersion")
+    integrationImplementation("io.rest-assured:json-path:$restAssuredVersion")
+    integrationImplementation("io.rest-assured:xml-path:$restAssuredVersion")
+    integrationImplementation("io.rest-assured:kotlin-extensions:$restAssuredVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")

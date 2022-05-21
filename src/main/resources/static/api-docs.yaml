@@ -6,20 +6,20 @@ info:
 servers:
   - url: http://localhost:9090/api/v1/
     description: local
-  - url: https://{environment}.example.com/v2
+  - url: https://cta-{environment}.ssp.ma.gov.br/api/v1/
     variables:
       environment:
-        default: api    # Production server
+        default: api.dev
         enum:
-          - api         # Production server
-          - api.dev     # Development server
-          - api.staging # Staging server
+          - api
+          - api.dev
+          - api.staging
 tags:
   - name: Aeronave
 paths:
   /fabricante:
     get:
-      summary: Buscar os fabricantes de aeronaves
+      summary: Buscar todos os fabricantes de aeronave
       operationId: buscarFabricantes
       tags:
         - Aeronave
@@ -33,7 +33,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Fabricante'
     post:
-      summary: Salvar os fabricantes de aeronaves
+      summary: Salvar um fabricante de aeronave
       operationId: adicionarFabricante
       tags:
         - Aeronave
@@ -46,10 +46,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fabricante'
-        405:
-          description: Parametro inválido
+  /fabricante/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID do Fabricante
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Aeronave
+      summary: Buscar um fabricante de aeronave por Id
+      operationId: buscarFabricantePorId
+      responses:
+        200:
+          description: Fabricante encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fabricante'
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Remover um fabricante de aeronave por Id
+      operationId: removerFabricante
+      tags:
+        - Aeronave
+      responses:
+        204:
+          description: Fabricante removido com sucesso
+        404:
+          $ref: '#/components/responses/NotFound'
+
     put:
-      summary: atualizar fabricante de aeronaves
+      summary: Atualizar um fabricante de aeronave
       operationId: atualizarFabricante
       tags:
         - Aeronave
@@ -62,41 +94,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fabricante'
-        405:
-          description: Parametro inválido
-  /fabricante/{fabricanteId}:
-    parameters:
-      - name: fabricanteId
-        in: path
-        description: ID do Fabricante
-        required: true
-        schema:
-          type: integer
-          format: int64
-    get:
-      tags:
-        - Aeronave
-      summary: Buscar um fabricante de aeronaves por Id
-      operationId: buscarFabricantePorId
-      responses:
-        200:
-          description: Fabricante encontrado com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Fabricante'
+
         404:
-          description: Fabricante nao encontrado
-    delete:
-      summary: Remover um fabricantes de aeronave por Id
-      operationId: removerFabricante
-      tags:
-        - Aeronave
-      responses:
-        204:
-          description: Fabricante removido com sucesso
-        404:
-          description: Fabricante nao encontrado
+          $ref: '#/components/responses/NotFound'
   /aeronave:
     get:
       summary: Buscar todas as aeronaves
@@ -113,7 +113,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Aeronave'
     post:
-      summary: salvar aeronave
+      summary: Salvar aeronave
       operationId: salvarAeronave
       requestBody:
         required: true
@@ -130,21 +130,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Aeronave'
-  /aeronave/horimetro:
+  /aeronave/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID da aeronave
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - Aeronave
+      summary: Buscar uma aeronave por Id
+      operationId: buscarAeronavePorId
+      responses:
+        200:
+          description: Aeronave encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aeronave'
+        404:
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Atualizar uma aeronave
+      operationId: atualizarAeronave
+      tags:
+        - Aeronave
+      requestBody:
+        $ref: '#/components/requestBodies/AeronaveBody'
+      responses:
+        200:
+          description: Criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aeronave'
+
+        404:
+          $ref: '#/components/responses/NotFound'
+  /aeronave/{id}/horimetro:
+    parameters:
+      - name: id
+        in: path
+        description: ID da aeronave
+        required: true
+        schema:
+          type: integer
     post:
-      summary: Buscar todas as aeronaves com horimetro
-      operationId: buscarAeronavesHorimetro
+      summary: Adicionar horas de voo e manutenção
+      operationId: adicionarHoras
       tags:
         - Aeronave
       requestBody:
         $ref: '#/components/requestBodies/HorimetroBody'
       responses:
-        '200':
-          description: Sucesso
+        200:
+          description: Horimetro adicionado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Horimetros'
+                $ref: '#/components/schemas/Horimetro'
+        404:
+          $ref: '#/components/responses/NotFound'
 components:
   schemas:
     Fabricante:
@@ -154,75 +202,111 @@ components:
         id:
           type: integer
           format: int64
+          example: 1
         nome:
           type: string
+          example: HELIBRÁS
     Aeronave:
       required:
         - marcas
-        - fabricante
+        - apelido
+        - modelo
+        - numero_serie
+        - categoria_registro
       properties:
         id:
           type: integer
           format: int64
+          example: 12
+        apelido:
+          type: string
+          example: Águia
         marcas:
           type: string
+          example: PP-PIT
         fabricante:
-          type: string
+          $ref: '#/components/schemas/Fabricante'
         modelo:
           type: string
+          example: AS350B2
         numero_serie:
+          type: integer
+          example: 4942
+        horimetro:
+          $ref: '#/components/schemas/Horimetro'
+        categoria_registro:
           type: string
+          enum:
+            - ADE
+            - SAE
+            - TPX
+    Error:
+      properties:
+        code:
+          type: string
+          example: 404
+        message:
+          type: string
+          example: Valor inválido
+      required:
+        - code
+        - message
     Horimetro:
       properties:
         hora_total:
           type: string
-          format: date
+          example: "04:48"
+          readOnly: true
         hora_manutencao:
           type: string
-          format: date-time
-        hora_total_dec:
-          type: number
-          format: float
-        hora_manutencao_dec:
+          example: "03:12"
+          readOnly: true
+        hora_total_decimal:
           type: number
           format: double
+          example: 4.8
+        hora_manutencao_decimal:
+          type: number
+          format: double
+          example: 3.2
     Horimetros:
       type: array
       items:
         $ref: '#/components/schemas/Horimetro'
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-        - code
-        - message
   requestBodies:
-    HorimetroBody:
-      description: A JSON object containing pet information
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Horimetro'
     FabricanteBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Fabricante'
+    AeronaveBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Aeronave'
+    HorimetroBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Horimetro'
   responses:
     NotFound:
-      description: The specified resource was not found
+      description: Não encontrado
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
     Unauthorized:
       description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InvalidParameter:
+      description: Invalid parameter
       content:
         application/json:
           schema:

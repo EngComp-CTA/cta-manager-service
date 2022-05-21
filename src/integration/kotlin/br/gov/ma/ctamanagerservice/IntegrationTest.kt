@@ -3,15 +3,21 @@ package br.gov.ma.ctamanagerservice
 import br.gov.ma.ctamanagerservice.adapters.api.controllers.mapToDto
 import br.gov.ma.ctamanagerservice.adapters.db.AeronaveGatewayImpl
 import br.gov.ma.ctamanagerservice.adapters.db.jdbc.AeronaveRepository
-import br.gov.ma.ctamanagerservice.adapters.db.jdbc.AeronaveHorimetro
 import br.gov.ma.ctamanagerservice.adapters.db.jdbc.FabricanteRepository
 import br.gov.ma.ctamanagerservice.adapters.db.jdbc.fromDomain
 import br.gov.ma.ctamanagerservice.adapters.dto.FabricanteDto
 import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
+import io.restassured.RestAssured
+import io.restassured.config.LogConfig
+import io.restassured.config.RestAssuredConfig
+import io.restassured.filter.log.LogDetail
+import io.restassured.http.ContentType
+import io.restassured.module.kotlin.extensions.Given
+import io.restassured.module.kotlin.extensions.Then
+import io.restassured.module.kotlin.extensions.When
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.hamcrest.CoreMatchers.equalTo
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
@@ -19,6 +25,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.getForEntity
 import org.springframework.boot.test.web.client.postForEntity
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -31,8 +38,7 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
-import java.math.BigDecimal
-import java.time.LocalDateTime
+
 
 private const val PATH_FABRICANTE = "/api/v1/fabricante"
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -41,6 +47,10 @@ internal class IntegrationTest(
     @Autowired val client: TestRestTemplate,
     @Autowired val jdbc: JdbcTemplate
 ) {
+
+    @LocalServerPort
+    private val port = 0
+
     @Autowired
     private lateinit var fabricanteRepository: FabricanteRepository
     @Autowired
@@ -56,6 +66,13 @@ internal class IntegrationTest(
     @BeforeEach
     fun setup() {
         deleteFromTables(jdbc, "fabricante")
+        RestAssured.port = port
+        RestAssured.config = RestAssuredConfig
+            .config()
+            .logConfig(
+                LogConfig.logConfig()
+                    .enableLoggingOfRequestAndResponseIfValidationFails()
+            )
 //        fabricanteRepository.deleteAll()
     }
 
@@ -87,6 +104,20 @@ internal class IntegrationTest(
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).isNotNull
         assertThat(entity.body?.nome).isEqualTo(novoFabricante.nome)
+    }
+
+    @Test
+    fun `dado um fabricante novo, quando enviar POST, deve retornar o fabricante salvo e 200_OK rest assured`() {
+        val nomeFabricante = "FORD"
+        Given {
+            body("{ \"nome\": \"$nomeFabricante\" }")
+            contentType(ContentType.JSON)
+        } When {
+            post(PATH_FABRICANTE)
+        } Then {
+            statusCode(HttpStatus.OK.value())
+            body("nome", equalTo(nomeFabricante))
+        }
     }
 
     @Test
