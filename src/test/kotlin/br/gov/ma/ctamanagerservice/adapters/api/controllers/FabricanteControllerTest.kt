@@ -23,7 +23,7 @@ internal class FabricanteControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `Quando chamar o metodo recuperarPorId, deve retornar um fabricante`() {
-        val fabricanteId = 10L;
+        val fabricanteId = 10L
         val fabricante = Fabricante(
             id = fabricanteId,
             nome = "Helibras"
@@ -35,14 +35,12 @@ internal class FabricanteControllerTest(@Autowired val mockMvc: MockMvc) {
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.id").value(fabricante.id))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.nome").value(fabricante.nome))
-
-
         Assertions.assertTrue(true)
     }
 
     @Test
     fun `Quando chamar o metodo recuperar todos, deve retornar um fabricante`() {
-        val fabricanteId = 10L;
+        val fabricanteId = 10L
         val fabricante = Fabricante(
             id = fabricanteId,
             nome = "Helibras"
@@ -58,9 +56,8 @@ internal class FabricanteControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `Quando chamar o recuperarPorId, deve lancar excecao`() {
-        val fabricanteId = 1L;
+        val fabricanteId = 1L
         every { fabricanteService.recuperarPorId(fabricanteId) } throws NotFoundException(msg = "fabricante nao encontrado")
-
         mockMvc.perform(MockMvcRequestBuilders.get("$FABRICANTE_PATH/$fabricanteId").accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }

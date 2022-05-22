@@ -8,7 +8,6 @@ import br.gov.ma.ctamanagerservice.util.WithLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
-
 @RestController
 class FabricanteController(
     private val fabricanteService: FabricanteService
@@ -46,7 +45,6 @@ class FabricanteController(
         fabricanteService.removerPorId(fabricanteId)
         return ResponseEntity.noContent().build()
     }
-
 }
 
 fun Fabricante.mapToDto(): FabricanteDto = FabricanteDto(

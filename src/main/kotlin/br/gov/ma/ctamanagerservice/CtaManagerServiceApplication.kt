@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class CtaManagerServiceApplication
 
 fun main(args: Array<String>) {
-	runApplication<CtaManagerServiceApplication>(*args)
+    runApplication<CtaManagerServiceApplication>(*args)
 }

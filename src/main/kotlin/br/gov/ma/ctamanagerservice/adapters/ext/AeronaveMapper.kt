@@ -8,7 +8,6 @@ import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
 import br.gov.ma.ctamanagerservice.domain.entities.MarcaNacionalidade
 import br.gov.ma.ctamanagerservice.domain.entities.Marcas
 
-
 fun Aeronave.mapToDto(): AeronaveDto {
     return AeronaveDto(
         id = id,

@@ -3,9 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.6.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-	id("org.openapi.generator") version "5.3.0"
+    id("org.openapi.generator") version "5.3.0"
 //    id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
     id("com.coditory.integration-test") version "1.3.0"
+//    id("io.gitlab.arturbosch.detekt") version "1.20.0"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 
     kotlin("jvm") version "1.5.21"
     kotlin("plugin.spring") version "1.5.21"
@@ -24,7 +26,6 @@ val postgresVersion = "42.2.14"
 val junitJupiterVersion = "5.8.2"
 val restAssuredVersion = "5.0.1"
 extra["testcontainersVersion"] = "1.16.2"
-//val springDocVersion = "1.6.7"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -82,6 +83,12 @@ tasks.compileKotlin {
     dependsOn("openApiGenerate")
 }
 
+ktlint {
+    filter {
+        exclude("**/generated/**")
+    }
+}
+
 val basePackage = "br.gov.ma.ctamanagerservice"
 val pathSwagger = "$projectDir/src/main/resources/static/api-docs.yaml"
 
@@ -110,4 +117,5 @@ tasks.openApiGenerate {
             "gradleBuildFile" to "false"
         )
     )
+    mustRunAfter("runKtlintCheckOverMainSourceSet")
 }

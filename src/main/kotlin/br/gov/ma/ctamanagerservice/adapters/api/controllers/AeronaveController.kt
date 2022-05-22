@@ -16,7 +16,7 @@ class AeronaveController(
 
     override fun buscarAeronaves(): ResponseEntity<List<AeronaveDto>> {
         val list = aeronaveService.recuperarTudo().map(Aeronave::mapToDto)
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(list)
     }
 
     override fun salvarAeronave(aeronaveDto: AeronaveDto): ResponseEntity<AeronaveDto> {

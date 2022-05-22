@@ -1,5 +1,5 @@
 package br.gov.ma.ctamanagerservice.domain.entities
 
-enum class MarcaNacionalidade {
-    PP, PR, PT, PS, PU
+enum class CategoriaRegistro {
+    SAE, TPX, ADE
 }

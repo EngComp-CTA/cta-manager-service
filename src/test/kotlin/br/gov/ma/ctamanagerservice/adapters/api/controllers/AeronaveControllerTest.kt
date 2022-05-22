@@ -1,6 +1,10 @@
 package br.gov.ma.ctamanagerservice.adapters.api.controllers
 
-import br.gov.ma.ctamanagerservice.domain.entities.*
+import br.gov.ma.ctamanagerservice.domain.entities.Aeronave
+import br.gov.ma.ctamanagerservice.domain.entities.CategoriaRegistro
+import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
+import br.gov.ma.ctamanagerservice.domain.entities.MarcaNacionalidade
+import br.gov.ma.ctamanagerservice.domain.entities.Marcas
 import br.gov.ma.ctamanagerservice.domain.services.AeronaveService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -10,7 +14,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(controllers = [AeronaveController::class])
 internal class AeronaveControllerTest(@Autowired val mockMvc: MockMvc) {
@@ -31,8 +37,7 @@ internal class AeronaveControllerTest(@Autowired val mockMvc: MockMvc) {
         )
         every { aeronaveService.recuperarTudo() } returns listOf(aeronave)
 
-        mockMvc.perform(get("/api/v1/aeronave")
-            .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/aeronave").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("\$.[0].id").value(aeronave.id))

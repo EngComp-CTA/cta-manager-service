@@ -1,6 +1,10 @@
 package br.gov.ma.ctamanagerservice.adapters.db.jdbc
 
-import br.gov.ma.ctamanagerservice.domain.entities.*
+import br.gov.ma.ctamanagerservice.domain.entities.Aeronave
+import br.gov.ma.ctamanagerservice.domain.entities.CategoriaRegistro
+import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
+import br.gov.ma.ctamanagerservice.domain.entities.MarcaNacionalidade
+import br.gov.ma.ctamanagerservice.domain.entities.Marcas
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table

@@ -9,7 +9,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
 @Component
-class  FabricanteGatewayImpl(
+class FabricanteGatewayImpl(
     private val repository: FabricanteRepository
 ) : FabricanteGateway {
 
