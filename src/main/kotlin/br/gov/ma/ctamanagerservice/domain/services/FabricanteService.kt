@@ -1,7 +1,7 @@
 package br.gov.ma.ctamanagerservice.domain.services
 
-import br.gov.ma.ctamanagerservice.adapters.api.NotFoundException
 import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
+import br.gov.ma.ctamanagerservice.domain.exceptions.NaoEncontradoException
 import br.gov.ma.ctamanagerservice.domain.gateways.FabricanteGateway
 import br.gov.ma.ctamanagerservice.util.WithLogging
 import org.springframework.stereotype.Service
@@ -33,7 +33,7 @@ class FabricanteService(
         LOG.info("recuperando fabricante por id=$fabricanteId")
         return fabricanteGateway.encontrarPorId(fabricanteId)?.also {
             LOG.info("encontrado fabricante=$it")
-        } ?: throw NotFoundException(msg = "Fabricante não encontrado")
+        } ?: throw NaoEncontradoException(mensagem = "Fabricante não encontrado")
     }
 
     fun removerPorId(fabricanteId: Long) {

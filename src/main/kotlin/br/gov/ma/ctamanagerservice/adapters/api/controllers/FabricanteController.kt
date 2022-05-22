@@ -24,7 +24,7 @@ class FabricanteController(
     override fun atualizarFabricante(id: Long, fabricanteDto: FabricanteDto): ResponseEntity<FabricanteDto> {
         LOG.info("Alterando fabricanteDto=$fabricanteDto e id=$id")
         return ResponseEntity.ok(
-            fabricanteService.atualizar(id, fabricanteDto.mapToDomain(),).mapToDto()
+            fabricanteService.atualizar(id, fabricanteDto.mapToDomain()).mapToDto()
         )
     }
 
