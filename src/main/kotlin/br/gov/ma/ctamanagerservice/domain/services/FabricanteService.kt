@@ -7,19 +7,19 @@ import org.springframework.stereotype.Service
 
 @Service
 class FabricanteService(private val repository: FabricanteGateway) {
-    fun recuperarTodos(): List<Fabricante> = repository.recuperarTodos()
+    fun recuperarTodos(): List<Fabricante> = repository.encontrarTudo()
     fun salvar(fabricante: Fabricante) = repository.salvar(fabricante)
     fun recuperarPorId(fabricanteId: Long): Fabricante {
-        return repository.recuperarPorId(fabricanteId) ?: throw NotFoundException(msg = "Fabricante não encontrado")
+        return repository.encontrarPorId(fabricanteId) ?: throw NotFoundException(msg = "Fabricante não encontrado")
     }
     fun removerPorId(fabricanteId: Long) {
         recuperarPorId(fabricanteId).let {
             repository.removerPorId(fabricanteId)
         }
     }
-    fun atualizar(fabricante: Fabricante): Fabricante {
-        return recuperarPorId(fabricante.id).let {
-            repository.salvar(fabricante)
+    fun atualizar(fabricanteId: Long, fabricante: Fabricante): Fabricante {
+        return recuperarPorId(fabricanteId).let {
+            repository.salvar(fabricante.copy(id = fabricanteId))
         }
     }
 }

@@ -14,7 +14,7 @@ class AeronaveGatewayImpl(
     private val fabricanteRepository: FabricanteRepository
 ) : AeronaveGateway {
 
-    override fun buscarTodos(): List<Aeronave> {
+    override fun encontrarTudo(): List<Aeronave> {
         return repository.findAll().map {
             it.toDomain { fabricanteId ->
                 fabricanteRepository.findByIdOrNull(fabricanteId)!!.toDomain()

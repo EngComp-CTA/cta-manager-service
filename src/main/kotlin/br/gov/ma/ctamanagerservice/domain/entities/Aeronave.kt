@@ -7,5 +7,5 @@ data class Aeronave(
     val fabricante: Fabricante,
     val modelo: String,
     val numeroSerie: Int,
-    val categoria: String
+    val categoria: CategoriaRegistro
 )

@@ -39,8 +39,9 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
 
-
-private const val PATH_FABRICANTE = "/api/v1/fabricante"
+private const val BASE_PATH = "/api/v1"
+private const val PATH_FABRICANTE = "$BASE_PATH/fabricante"
+private const val PATH_AERONAVE = "$BASE_PATH/aeronave"
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Testcontainers
 internal class IntegrationTest(
@@ -139,7 +140,7 @@ internal class IntegrationTest(
         ).toDomain()
         val nomeAtualizado = "HELIBRAS ATUALIZADO"
         val entity = client.exchange<FabricanteDto>(
-            url = PATH_FABRICANTE,
+            url = "$PATH_FABRICANTE/${fabricante.id}",
             method = HttpMethod.PUT,
             requestEntity = HttpEntity(fabricante.mapToDto().copy(nome = nomeAtualizado))
         )
@@ -209,6 +210,12 @@ internal class IntegrationTest(
     fun `dado um ID inválido, quando enviar DELETE com ID, deve retornar 400_BAD_REQUEST`() {
         val response = client.exchange<String>("$PATH_FABRICANTE/2000", HttpMethod.DELETE)
         assertThat(response.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
+    }
+
+    @Test
+    fun `aeronaves`() {
+        val response = client.exchange<String>(PATH_AERONAVE, HttpMethod.GET)
+        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
     }
 }
 

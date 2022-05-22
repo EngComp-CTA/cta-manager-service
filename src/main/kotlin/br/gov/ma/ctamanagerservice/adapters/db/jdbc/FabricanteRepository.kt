@@ -25,3 +25,8 @@ fun fromDomain(fabricante: Fabricante) = FabricanteTable(
     id = fabricante.id,
     nome = fabricante.nome
 )
+
+fun Fabricante.toTable() = FabricanteTable(
+    id = id,
+    nome = nome
+)

@@ -5,14 +5,8 @@ import br.gov.ma.ctamanagerservice.adapters.dto.FabricanteDto
 import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
 import br.gov.ma.ctamanagerservice.domain.services.FabricanteService
 import br.gov.ma.ctamanagerservice.util.WithLogging
-import org.slf4j.LoggerFactory
-import org.slf4j.LoggerFactory.getLogger
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import java.util.logging.Logger
-import javax.validation.Valid
 
 
 @RestController
@@ -31,7 +25,7 @@ class FabricanteController(
     override fun atualizarFabricante(id: Long, fabricanteDto: FabricanteDto): ResponseEntity<FabricanteDto> {
         LOG.info("adicionando novo fabricante $fabricanteDto")
         return ResponseEntity.ok(
-            fabricanteService.atualizar(fabricanteDto.mapToDomain()).mapToDto()
+            fabricanteService.atualizar(id, fabricanteDto.mapToDomain(),).mapToDto()
         )
     }
 

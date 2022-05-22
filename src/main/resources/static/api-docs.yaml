@@ -236,10 +236,7 @@ components:
           $ref: '#/components/schemas/Horimetro'
         categoria_registro:
           type: string
-          enum:
-            - ADE
-            - SAE
-            - TPX
+          example: SAE
     Error:
       properties:
         code:

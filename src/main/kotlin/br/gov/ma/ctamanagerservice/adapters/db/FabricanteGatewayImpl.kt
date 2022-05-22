@@ -13,11 +13,11 @@ class  FabricanteGatewayImpl(
     private val repository: FabricanteRepository
 ) : FabricanteGateway {
 
-    override fun recuperarTodos(): List<Fabricante> {
+    override fun encontrarTudo(): List<Fabricante> {
         return repository.findAll().map(FabricanteTable::toDomain)
     }
 
-    override fun recuperarPorId(fabricanteId: Long): Fabricante? {
+    override fun encontrarPorId(fabricanteId: Long): Fabricante? {
         return repository.findByIdOrNull(fabricanteId)?.toDomain()
     }
 

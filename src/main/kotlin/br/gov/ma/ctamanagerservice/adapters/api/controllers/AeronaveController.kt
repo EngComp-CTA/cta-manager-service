@@ -15,12 +15,12 @@ class AeronaveController(
 ) : AeronaveApi {
 
     override fun buscarAeronaves(): ResponseEntity<List<AeronaveDto>> {
-        val list = aeronaveService.getAll().map(Aeronave::mapToDto)
+        val list = aeronaveService.recuperarTudo().map(Aeronave::mapToDto)
         return ResponseEntity.ok(list);
     }
 
     override fun salvarAeronave(aeronaveDto: AeronaveDto): ResponseEntity<AeronaveDto> {
-        val aeronaveSalva = aeronaveService.save(aeronaveDto.mapToDomain()).mapToDto()
+        val aeronaveSalva = aeronaveService.salvar(aeronaveDto.mapToDomain()).mapToDto()
         return ResponseEntity.ok(aeronaveSalva)
     }
 }

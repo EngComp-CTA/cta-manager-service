@@ -46,7 +46,7 @@ data class AeronaveTable(
         },
         modelo = modelo,
         numeroSerie = numeroSerie,
-        categoria = categoriaRegistro
+        categoria = CategoriaRegistro.valueOf(categoriaRegistro)
     )
 
     companion object {
@@ -56,7 +56,7 @@ data class AeronaveTable(
             modelo = aeronave.modelo,
             fabricanteId = aeronave.fabricante.id,
             numeroSerie = aeronave.numeroSerie,
-            categoriaRegistro = aeronave.categoria,
+            categoriaRegistro = aeronave.categoria.toString(),
             apelido = aeronave.apelido
         )
     }
