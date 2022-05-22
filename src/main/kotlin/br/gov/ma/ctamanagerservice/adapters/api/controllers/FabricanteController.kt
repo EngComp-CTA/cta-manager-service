@@ -14,34 +14,36 @@ class FabricanteController(
 ) : FabricanteApi, WithLogging() {
 
     override fun adicionarFabricante(fabricanteDto: FabricanteDto): ResponseEntity<FabricanteDto> {
-        LOG.info("adicionando novo fabricante $fabricanteDto")
+        LOG.info("Adicionando novo fabricante $fabricanteDto")
         val novoFabricante = fabricanteDto.mapToDomain()
         return ResponseEntity.ok(
-            fabricanteService.salvar(novoFabricante).mapToDto()
+            fabricanteService.criar(novoFabricante).mapToDto()
         )
     }
 
     override fun atualizarFabricante(id: Long, fabricanteDto: FabricanteDto): ResponseEntity<FabricanteDto> {
-        LOG.info("adicionando novo fabricante $fabricanteDto")
+        LOG.info("Alterando fabricanteDto=$fabricanteDto e id=$id")
         return ResponseEntity.ok(
             fabricanteService.atualizar(id, fabricanteDto.mapToDomain(),).mapToDto()
         )
     }
 
     override fun buscarFabricantePorId(fabricanteId: Long): ResponseEntity<FabricanteDto> {
-        LOG.info("buscando fabricando por id $fabricanteId")
+        LOG.info("Buscando fabricante por id=$fabricanteId")
         return ResponseEntity.ok(
             fabricanteService.recuperarPorId(fabricanteId).mapToDto()
         )
     }
 
     override fun buscarFabricantes(): ResponseEntity<List<FabricanteDto>> {
+        LOG.info("Buscando todos os fabricantes")
         return ResponseEntity.ok(
             fabricanteService.recuperarTodos().map(Fabricante::mapToDto)
         )
     }
 
     override fun removerFabricante(fabricanteId: Long): ResponseEntity<Unit> {
+        LOG.info("Removendo fabricante por id=$fabricanteId")
         fabricanteService.removerPorId(fabricanteId)
         return ResponseEntity.noContent().build()
     }
