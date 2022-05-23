@@ -4,11 +4,9 @@ import br.gov.ma.ctamanagerservice.adapters.api.AeronaveApi
 import br.gov.ma.ctamanagerservice.adapters.dto.AeronaveDto
 import br.gov.ma.ctamanagerservice.adapters.dto.AeronaveRequestDto
 import br.gov.ma.ctamanagerservice.adapters.dto.HorimetroDto
+import br.gov.ma.ctamanagerservice.adapters.ext.toDomain
+import br.gov.ma.ctamanagerservice.adapters.ext.toDto
 import br.gov.ma.ctamanagerservice.domain.entities.Aeronave
-import br.gov.ma.ctamanagerservice.domain.entities.AeronaveHorimetro
-import br.gov.ma.ctamanagerservice.domain.entities.CategoriaRegistro
-import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
-import br.gov.ma.ctamanagerservice.domain.entities.Marcas
 import br.gov.ma.ctamanagerservice.domain.services.AeronaveService
 import br.gov.ma.ctamanagerservice.util.WithLogging
 import org.springframework.http.ResponseEntity
@@ -54,35 +52,3 @@ class AeronaveController(
         )
     }
 }
-
-fun Aeronave.toDto() = AeronaveDto(
-    id = id,
-    numeroSerie = numeroSerie,
-    modelo = modelo,
-    fabricante = fabricante.toDto(),
-    marcas = marcas.toString(),
-    apelido = apelido,
-    categoriaRegistro = categoria.name
-)
-
-fun AeronaveRequestDto.toDomain() = Aeronave(
-    id = 0L,
-    apelido = apelido,
-    categoria = CategoriaRegistro.valueOf(categoriaRegistro.uppercase()),
-    marcas = Marcas.from(marcas),
-    fabricante = Fabricante(fabricanteId),
-    modelo = modelo,
-    numeroSerie = numeroSerie
-)
-
-fun HorimetroDto.toDomain() = AeronaveHorimetro(
-    totalVoo = horaTotalDecimal.toBigDecimal(),
-    totalManutencao = horaManutencaoDecimal.toBigDecimal()
-)
-
-fun AeronaveHorimetro.toDto() = HorimetroDto(
-    horaTotalDecimal = totalVoo.toDouble(),
-    horaManutencaoDecimal = totalManutencao.toDouble(),
-    horaTotal = totalVooEmHoras,
-    horaManutencao = totalManutencaoEmHoras
-)

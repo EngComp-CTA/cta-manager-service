@@ -1,6 +1,6 @@
 package br.gov.ma.ctamanagerservice.domain.exceptions
 
-class NaoEncontradoException(
-    val tipo: String = "NOT_FOUND",
-    val mensagem: String
-) : Exception()
+data class NaoEncontradoException(
+    override val tipo: String = "NOT_FOUND",
+    override val mensagem: String
+) : BaseException()

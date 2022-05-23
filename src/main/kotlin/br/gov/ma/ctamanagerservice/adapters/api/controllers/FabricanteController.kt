@@ -2,6 +2,8 @@ package br.gov.ma.ctamanagerservice.adapters.api.controllers
 
 import br.gov.ma.ctamanagerservice.adapters.api.FabricanteApi
 import br.gov.ma.ctamanagerservice.adapters.dto.FabricanteDto
+import br.gov.ma.ctamanagerservice.adapters.ext.toDomain
+import br.gov.ma.ctamanagerservice.adapters.ext.toDto
 import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
 import br.gov.ma.ctamanagerservice.domain.services.FabricanteService
 import br.gov.ma.ctamanagerservice.util.WithLogging
@@ -48,13 +50,3 @@ class FabricanteController(
         return ResponseEntity.noContent().build()
     }
 }
-
-fun Fabricante.toDto(): FabricanteDto = FabricanteDto(
-    id = id,
-    nome = nome
-)
-
-fun FabricanteDto.toDomain(): Fabricante = Fabricante(
-    id = id ?: 0L,
-    nome = nome
-)

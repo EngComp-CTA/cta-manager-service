@@ -8,7 +8,6 @@ import br.gov.ma.ctamanagerservice.domain.entities.AeronaveHorimetro
 import br.gov.ma.ctamanagerservice.domain.gateways.AeronaveGateway
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
 class AeronaveGatewayImpl(

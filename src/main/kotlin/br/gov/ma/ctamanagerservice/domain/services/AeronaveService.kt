@@ -2,6 +2,7 @@ package br.gov.ma.ctamanagerservice.domain.services
 
 import br.gov.ma.ctamanagerservice.domain.entities.Aeronave
 import br.gov.ma.ctamanagerservice.domain.entities.AeronaveHorimetro
+import br.gov.ma.ctamanagerservice.domain.exceptions.HorimetroNaoSalvoException
 import br.gov.ma.ctamanagerservice.domain.exceptions.NaoEncontradoException
 import br.gov.ma.ctamanagerservice.domain.gateways.AeronaveGateway
 import br.gov.ma.ctamanagerservice.util.WithLogging
@@ -58,7 +59,7 @@ class AeronaveService(
             LOG.info("horimetro atualizado=$horimetroAtualizado")
             aeronaveGateway.salvarHorimetro(aeronaveId, horimetroAtualizado).takeIf { it }?.run {
                 horimetroAtualizado
-            } ?: throw Exception()
+            } ?: throw HorimetroNaoSalvoException()
         }
     }
 }
