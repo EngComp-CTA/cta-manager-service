@@ -1,14 +1,11 @@
 package br.gov.ma.ctamanagerservice.adapters.api.controllers
 
-import br.gov.ma.ctamanagerservice.adapters.api.NotFoundException
 import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
 import br.gov.ma.ctamanagerservice.domain.services.FabricanteService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -49,6 +46,6 @@ internal class FabricanteControllerTest(@Autowired val mockMvc: MockMvc) {
         every { fabricanteService.removerPorId(FABRICANTE_ID) } just Runs
 
         mockMvc.perform(delete("$FABRICANTE_PATH/$FABRICANTE_ID"))
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
     }
 }

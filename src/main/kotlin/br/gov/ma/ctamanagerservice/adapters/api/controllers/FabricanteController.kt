@@ -15,30 +15,30 @@ class FabricanteController(
 
     override fun adicionarFabricante(fabricanteDto: FabricanteDto): ResponseEntity<FabricanteDto> {
         LOG.info("Adicionando novo fabricante $fabricanteDto")
-        val novoFabricante = fabricanteDto.mapToDomain()
+        val novoFabricante = fabricanteDto.toDomain()
         return ResponseEntity.ok(
-            fabricanteService.criar(novoFabricante).mapToDto()
+            fabricanteService.criar(novoFabricante).toDto()
         )
     }
 
     override fun atualizarFabricante(id: Long, fabricanteDto: FabricanteDto): ResponseEntity<FabricanteDto> {
-        LOG.info("Alterando fabricanteDto=$fabricanteDto e id=$id")
+        LOG.info("atualizando fabricanteDto=$fabricanteDto e id=$id")
         return ResponseEntity.ok(
-            fabricanteService.atualizar(id, fabricanteDto.mapToDomain()).mapToDto()
+            fabricanteService.alterar(id, fabricanteDto.toDomain()).toDto()
         )
     }
 
     override fun buscarFabricantePorId(fabricanteId: Long): ResponseEntity<FabricanteDto> {
         LOG.info("Buscando fabricante por id=$fabricanteId")
         return ResponseEntity.ok(
-            fabricanteService.recuperarPorId(fabricanteId).mapToDto()
+            fabricanteService.recuperarPorId(fabricanteId).toDto()
         )
     }
 
     override fun buscarFabricantes(): ResponseEntity<List<FabricanteDto>> {
         LOG.info("Buscando todos os fabricantes")
         return ResponseEntity.ok(
-            fabricanteService.recuperarTodos().map(Fabricante::mapToDto)
+            fabricanteService.recuperarTodos().map(Fabricante::toDto)
         )
     }
 
@@ -49,12 +49,12 @@ class FabricanteController(
     }
 }
 
-fun Fabricante.mapToDto(): FabricanteDto = FabricanteDto(
+fun Fabricante.toDto(): FabricanteDto = FabricanteDto(
     id = id,
     nome = nome
 )
 
-fun FabricanteDto.mapToDomain(): Fabricante = Fabricante(
+fun FabricanteDto.toDomain(): Fabricante = Fabricante(
     id = id ?: 0L,
     nome = nome
 )

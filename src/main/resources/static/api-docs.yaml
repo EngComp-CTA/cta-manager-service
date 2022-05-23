@@ -114,13 +114,9 @@ paths:
                   $ref: '#/components/schemas/Aeronave'
     post:
       summary: Salvar aeronave
-      operationId: salvarAeronave
+      operationId: adicionarAeronave
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Aeronave'
+        $ref: '#/components/requestBodies/AeronaveBody'
       tags:
         - Aeronave
       responses:
@@ -138,6 +134,7 @@ paths:
         required: true
         schema:
           type: integer
+          format: int64
     get:
       tags:
         - Aeronave
@@ -177,6 +174,7 @@ paths:
         required: true
         schema:
           type: integer
+          format: int64
     post:
       summary: Adicionar horas de voo e manutenção
       operationId: adicionarHoras
@@ -213,6 +211,7 @@ components:
         - modelo
         - numero_serie
         - categoria_registro
+        - fabricante
       properties:
         id:
           type: integer
@@ -237,6 +236,34 @@ components:
         categoria_registro:
           type: string
           example: SAE
+    AeronaveRequest:
+      required:
+        - marcas
+        - apelido
+        - modelo
+        - numero_serie
+        - categoria_registro
+        - fabricante_id
+      properties:
+        apelido:
+          type: string
+          example: Águia
+        marcas:
+          type: string
+          example: PP-PIT
+        fabricante_id:
+          type: integer
+          format: int64
+          example: 1
+        modelo:
+          type: string
+          example: AS350B2
+        numero_serie:
+          type: integer
+          example: 4942
+        categoria_registro:
+          type: string
+          example: SAE
     Error:
       properties:
         code:
@@ -249,6 +276,9 @@ components:
         - code
         - message
     Horimetro:
+      required:
+        - hora_total_decimal
+        - hora_manutencao_decimal
       properties:
         hora_total:
           type: string
@@ -282,7 +312,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Aeronave'
+            $ref: '#/components/schemas/AeronaveRequest'
     HorimetroBody:
       required: true
       content:

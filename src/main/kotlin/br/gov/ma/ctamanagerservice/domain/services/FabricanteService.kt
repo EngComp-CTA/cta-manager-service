@@ -13,7 +13,7 @@ class FabricanteService(
     fun recuperarTodos(): List<Fabricante> {
         LOG.info("recuperando todos os fabricantes")
         return fabricanteGateway.encontrarTudo().also {
-            LOG.info("Total de ${it.size} fabricantes")
+            LOG.info("Total de ${it.size} fabricantes encontrados")
         }
     }
 
@@ -44,10 +44,10 @@ class FabricanteService(
         }
     }
 
-    fun atualizar(fabricanteId: Long, fabricante: Fabricante): Fabricante {
-        LOG.info("alterando fabricante com id=$fabricanteId")
-        return recuperarPorId(fabricanteId).run {
-            salvar(fabricante.copy(id = fabricanteId))
+    fun alterar(id: Long, fabricante: Fabricante): Fabricante {
+        LOG.info("alterando fabricante com id=$id")
+        return recuperarPorId(id).run {
+            salvar(fabricante.copy(id = id))
         }
     }
 }

@@ -1,12 +1,13 @@
 package br.gov.ma.ctamanagerservice
 
-import br.gov.ma.ctamanagerservice.adapters.api.controllers.mapToDto
+import br.gov.ma.ctamanagerservice.adapters.api.controllers.toDto
 import br.gov.ma.ctamanagerservice.adapters.db.AeronaveGatewayImpl
-import br.gov.ma.ctamanagerservice.adapters.db.jdbc.AeronaveRepository
 import br.gov.ma.ctamanagerservice.adapters.db.jdbc.FabricanteRepository
 import br.gov.ma.ctamanagerservice.adapters.db.jdbc.fromDomain
 import br.gov.ma.ctamanagerservice.adapters.dto.FabricanteDto
+import br.gov.ma.ctamanagerservice.domain.entities.AeronaveHorimetro
 import br.gov.ma.ctamanagerservice.domain.entities.Fabricante
+import br.gov.ma.ctamanagerservice.domain.services.AeronaveService
 import io.restassured.RestAssured
 import io.restassured.config.LogConfig
 import io.restassured.config.RestAssuredConfig
@@ -33,12 +34,12 @@ import org.springframework.http.HttpStatus
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.springframework.test.jdbc.JdbcTestUtils.deleteFromTables
 import org.testcontainers.containers.JdbcDatabaseContainer
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
+import java.math.BigDecimal
 
 private const val BASE_PATH = "/api/v1"
 private const val PATH_FABRICANTE = "$BASE_PATH/fabricante"
@@ -56,7 +57,7 @@ internal class IntegrationTest(
     @Autowired
     private lateinit var fabricanteRepository: FabricanteRepository
     @Autowired
-    private lateinit var aeronaveRepository: AeronaveRepository
+    private lateinit var aeronaveService: AeronaveService
     @Autowired
     private lateinit var aeronaveGatewayImpl: AeronaveGatewayImpl
 
@@ -67,7 +68,7 @@ internal class IntegrationTest(
 
     @BeforeEach
     fun setup() {
-        deleteFromTables(jdbc, "fabricante")
+//        deleteFromTables(jdbc, "fabricante")
         RestAssured.port = port
         RestAssured.config = RestAssuredConfig
             .config()
@@ -143,7 +144,7 @@ internal class IntegrationTest(
         val entity = client.exchange<FabricanteDto>(
             url = "$PATH_FABRICANTE/${fabricante.id}",
             method = HttpMethod.PUT,
-            requestEntity = HttpEntity(fabricante.mapToDto().copy(nome = nomeAtualizado))
+            requestEntity = HttpEntity(fabricante.toDto().copy(nome = nomeAtualizado))
         )
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).isNotNull
@@ -162,17 +163,19 @@ internal class IntegrationTest(
 
         val entity = client.getForEntity<FabricanteDto>("$PATH_FABRICANTE/${fabricante.id}")
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(entity.body).isEqualTo(fabricante.mapToDto())
+        assertThat(entity.body).isEqualTo(fabricante.toDto())
     }
 
     @Test
     fun `dado um ID inválido, quando enviar GET com ID, deve retornar 404_NOT_FOUND`() {
+        // TODO: 23/05/22 - corrigir handle exception
         val entity = client.getForEntity<String>("$PATH_FABRICANTE/1000")
         assertThat(entity.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 
     @Test
     fun `quando enviar GET, deve retornar 200_OK e todos os fabricantes cadastrados`() {
+        // TODO: 23/05/22 - corrigir handle exception
         val fabricantes = listOf(
             fromDomain(
                 Fabricante(
@@ -209,14 +212,36 @@ internal class IntegrationTest(
 
     @Test
     fun `dado um ID inválido, quando enviar DELETE com ID, deve retornar 400_BAD_REQUEST`() {
+        // TODO: 23/05/22 - corrigir handle exception
         val response = client.exchange<String>("$PATH_FABRICANTE/2000", HttpMethod.DELETE)
         assertThat(response.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
     }
 
     @Test
     fun `aeronaves`() {
-        val response = client.exchange<String>(PATH_AERONAVE, HttpMethod.GET)
-        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        val insertFabricante = "INSERT INTO fabricante (nome) VALUES ('HELIBRÁS')"
+        val insertAeronave = """
+            INSERT INTO aeronave (fabricante_id, apelido, marcas, modelo, numero_serie, categoria_registro)
+            VALUES (1, 'AGUIA', 'PPPIT', 'ASB350B2', 4942, 'ADE')
+        """.trimIndent()
+        val insertHorimetro = """
+            INSERT INTO aeronave_horimetro (aeronave_id, total_voo, total_manutencao, atualizado_em)
+            VALUES (1, 19.2, 15.8, now())
+        """.trimIndent()
+        jdbc.execute(insertFabricante)
+        jdbc.execute(insertAeronave)
+        jdbc.execute(insertHorimetro)
+        jdbc.execute("UPDATE aeronave_horimetro SET total_voo = 1, total_manutencao = 1 WHERE aeronave_id = 1")
+        val aeronave = aeronaveGatewayImpl.encontrarPorId(1L)
+        println("aeronave=$aeronave")
+        aeronaveGatewayImpl.recuperarHorimetro(1L)?.let {
+            println(it)
+        }
+
+        aeronaveService.adicionarHoras(1L, AeronaveHorimetro(BigDecimal.valueOf(2), BigDecimal.valueOf(1.2)))
+        aeronaveGatewayImpl.encontrarPorId(1L)?.also {
+            println("aeronaveAtualizada=$it")
+        }
     }
 }
 

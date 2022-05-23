@@ -12,7 +12,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-
 internal class FabricanteServiceTest {
 
     private val fabricanteGateway = mockk<FabricanteGateway>()
@@ -88,7 +87,7 @@ internal class FabricanteServiceTest {
         every { fabricanteGateway.encontrarPorId(ID) } returns fabricante
         every { fabricanteGateway.salvar(fabricante) } returns fabricante
 
-        val fabricanteAtualizado = service.atualizar(ID, fabricante)
+        val fabricanteAtualizado = service.alterar(ID, fabricante)
 
         verify { fabricanteGateway.encontrarPorId(ID) }
         verify { fabricanteGateway.salvar(fabricante) }
