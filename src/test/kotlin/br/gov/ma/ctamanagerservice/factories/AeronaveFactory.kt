@@ -1,5 +1,6 @@
 package br.gov.ma.ctamanagerservice.factories
 
+import br.gov.ma.ctamanagerservice.adapters.dto.AeronaveRequestDto
 import br.gov.ma.ctamanagerservice.domain.entities.Aeronave
 import br.gov.ma.ctamanagerservice.domain.entities.AeronaveHorimetro
 import br.gov.ma.ctamanagerservice.domain.entities.CategoriaRegistro
@@ -21,9 +22,10 @@ fun umFabricante(
 fun umaAeronave(
     id: Long = nextLong(999L),
     apelido: String = "GAVIAO",
+    fabricante: Fabricante = umFabricante()
 ) = Aeronave(
     id = id,
-    fabricante = umFabricante(),
+    fabricante = fabricante,
     apelido = apelido,
     marcas = Marcas.from("PP-PAT"),
     numeroSerie = nextInt(9999),
@@ -33,6 +35,15 @@ fun umaAeronave(
 
 fun Aeronave.comHorimetro(horimetro: AeronaveHorimetro = umHorimetro()) =
     this.copy(horimetroAeronave = horimetro)
+
+fun Aeronave.toRequestDto() = AeronaveRequestDto(
+    apelido = apelido,
+    marcas = "$marcas",
+    fabricanteId = fabricante.id,
+    modelo = modelo,
+    numeroSerie = numeroSerie,
+    categoriaRegistro = categoria.name
+)
 
 fun umHorimetro() = AeronaveHorimetro(
     totalVoo = nextDecimal(),
