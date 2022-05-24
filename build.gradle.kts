@@ -114,7 +114,8 @@ tasks.openApiGenerate {
     configOptions.set(
         mapOf(
             "interfaceOnly" to "true",
-            "gradleBuildFile" to "false"
+            "gradleBuildFile" to "false",
+            "exceptionHandler" to "false"
         )
     )
     mustRunAfter("runKtlintCheckOverMainSourceSet")

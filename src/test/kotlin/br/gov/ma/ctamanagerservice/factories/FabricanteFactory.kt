@@ -10,14 +10,17 @@ import java.math.RoundingMode
 import kotlin.random.Random.Default.nextInt
 import kotlin.random.Random.Default.nextLong
 
-fun umFabricante() = Fabricante(
-    id = nextLong(999L),
-    nome = "HELIBRAS"
+fun umFabricante(
+    id: Long = nextLong(999L),
+    nome: String = "HELIBRAS",
+) = Fabricante(
+    id = id,
+    nome = nome
 )
 
 fun umaAeronave(
     id: Long = nextLong(999L),
-    apelido: String = "GAVIAO"
+    apelido: String = "GAVIAO",
 ) = Aeronave(
     id = id,
     fabricante = umFabricante(),
