@@ -3,7 +3,7 @@ package br.gov.ma.ctamanagerservice.util
 import java.math.BigDecimal
 
 private const val UM_MINUTO_EM_SEGUNDOS = 60L
-fun BigDecimal.converteParaHoras(): String {
+fun BigDecimal.formataEmHoras(): String {
     val fracaoMinutos = rem(BigDecimal.ONE)
     val totalHoras = minus(fracaoMinutos).toInt()
     val totalMinutos = fracaoMinutos.multiply(BigDecimal.valueOf(UM_MINUTO_EM_SEGUNDOS)).toInt()
