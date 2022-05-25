@@ -15,7 +15,7 @@ servers:
           - api.dev
           - api.staging
 tags:
-  - name: Aeronave
+  - name: Cadastro
 paths:
   /fabricante:
     get:
@@ -79,7 +79,6 @@ paths:
           description: Fabricante removido com sucesso
         404:
           $ref: '#/components/responses/NotFound'
-
     put:
       summary: Atualizar um fabricante de aeronave
       operationId: atualizarFabricante
@@ -191,6 +190,148 @@ paths:
                 $ref: '#/components/schemas/Horimetro'
         404:
           $ref: '#/components/responses/NotFound'
+  /pessoa:
+    get:
+      summary: Buscar todas as pessoas
+      operationId: buscarPessoas
+      tags:
+        - Cadastro
+      parameters:
+        - in: query
+          name: nome
+          schema:
+            type: string
+          description: Buscar pessoas pelo nome
+        - in: query
+          name: cpf
+          schema:
+            type: string
+          description: Buscar pessoa pelo cpf
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pessoa'
+    post:
+      summary: Adicionar uma pessoa
+      operationId: adicionarPessoa
+      requestBody:
+        $ref: '#/components/requestBodies/PessoaBody'
+      tags:
+        - Cadastro
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pessoa'
+  /pessoa/{id}:
+    parameters:
+    - name: id
+      in: path
+      description: ID da aeronave
+      required: true
+      schema:
+        type: integer
+        format: int64
+    get:
+      tags:
+        - Cadastro
+      summary: Buscar uma pessoa por Id
+      operationId: buscarPessoaPorId
+      responses:
+        200:
+          description: Pessoa encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pessoa'
+        404:
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Atualizar uma pessoa
+      operationId: atualizarPessoa
+      tags:
+        - Cadastro
+      requestBody:
+        $ref: '#/components/requestBodies/PessoaBody'
+      responses:
+        200:
+          description: Criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pessoa'
+        404:
+          $ref: '#/components/responses/NotFound'
+  /aeronauta:
+    get:
+      summary: Buscar todos os aeronautas
+      operationId: buscarAeronauta
+      tags:
+        - Cadastro
+      parameters:
+        - in: query
+          name: codigo_anac
+          schema:
+            type: integer
+          description: Buscar aeronauta pelo codigo anac
+        - in: query
+          name: cpf
+          schema:
+            type: string
+          description: Buscar aeronauta pelo cpf
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Aeronauta'
+    post:
+      summary: Adicionar um aeronauta
+      operationId: adicionarAeronauta
+      requestBody:
+        $ref: '#/components/requestBodies/AeronautaBody'
+      tags:
+        - Cadastro
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aeronauta'
+  /aeronauta/{id}:
+    parameters:
+    - name: id
+      in: path
+      description: ID da aeronave
+      required: true
+      schema:
+        type: integer
+        format: int64
+    get:
+      tags:
+        - Cadastro
+      summary: Buscar aeronauta por Id
+      operationId: buscarAeronautaPorId
+      responses:
+        200:
+          description: Aeronauta encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aeronauta'
+        404:
+          $ref: '#/components/responses/NotFound'
 components:
   schemas:
     Fabricante:
@@ -300,6 +441,35 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Horimetro'
+    Pessoa:
+      required:
+        - cpf
+        - nome
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        cpf:
+          type: string
+          example: 93226553054
+        nome:
+          type: string
+          example: Rogerio Cabral
+    Aeronauta:
+      required:
+        - pessoa
+        - codigo_anac
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        pessoa:
+          $ref: '#/components/schemas/Pessoa'
+        codigo_anac:
+          type: integer
+          example: 10686
   requestBodies:
     FabricanteBody:
       required: true
@@ -319,6 +489,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Horimetro'
+    PessoaBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pessoa'
+    AeronautaBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Aeronauta'
   responses:
     NotFound:
       description: Não encontrado
