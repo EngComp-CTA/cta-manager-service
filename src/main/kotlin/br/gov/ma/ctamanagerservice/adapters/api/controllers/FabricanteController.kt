@@ -30,10 +30,10 @@ class FabricanteController(
         )
     }
 
-    override fun buscarFabricantePorId(fabricanteId: Long): ResponseEntity<FabricanteDto> {
-        LOG.info("Buscando fabricante por id=$fabricanteId")
+    override fun buscarFabricantePorId(id: Long): ResponseEntity<FabricanteDto> {
+        LOG.info("Buscando fabricante por id=$id")
         return ResponseEntity.ok(
-            fabricanteService.recuperarPorId(fabricanteId).toDto()
+            fabricanteService.recuperarPorId(id).toDto()
         )
     }
 
@@ -44,9 +44,9 @@ class FabricanteController(
         )
     }
 
-    override fun removerFabricante(fabricanteId: Long): ResponseEntity<Unit> {
-        LOG.info("Removendo fabricante por id=$fabricanteId")
-        fabricanteService.removerPorId(fabricanteId)
+    override fun removerFabricante(id: Long): ResponseEntity<Unit> {
+        LOG.info("Removendo fabricante por id=$id")
+        fabricanteService.removerPorId(id)
         return ResponseEntity.noContent().build()
     }
 }

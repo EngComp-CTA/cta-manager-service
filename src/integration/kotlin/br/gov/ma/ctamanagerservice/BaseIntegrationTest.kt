@@ -30,8 +30,7 @@ abstract class BaseIntegrationTest {
     @BeforeEach
     fun setup() {
         deleteFromTables(
-            jdbc,
-            FABRICANTE_TABLE, AERONAVE_HORIMETRO_TABLE, AERONAVE_TABLE
+            jdbc, AERONAVE_HORIMETRO_TABLE, AERONAVE_TABLE, FABRICANTE_TABLE
         )
         RestAssured.port = port
         RestAssured.config = RestAssuredConfig

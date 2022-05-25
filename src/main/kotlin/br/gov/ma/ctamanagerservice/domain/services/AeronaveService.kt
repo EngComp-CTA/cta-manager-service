@@ -7,7 +7,7 @@ import br.gov.ma.ctamanagerservice.domain.exceptions.NaoEncontradoException
 import br.gov.ma.ctamanagerservice.domain.gateways.AeronaveGateway
 import br.gov.ma.ctamanagerservice.util.WithLogging
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 
 @Service
 class AeronaveService(
@@ -48,14 +48,12 @@ class AeronaveService(
     }
 
     fun adicionarHoras(aeronaveId: Long, horimetroParaAdicionar: AeronaveHorimetro): AeronaveHorimetro {
-        LOG.info("adicionando horas para aeronave com id=$aeronaveId")
+        LOG.info("adicionando horas=$horimetroParaAdicionar para aeronave com id=$aeronaveId")
         return recuperarPorId(aeronaveId).let { aeronave ->
             val horimetro = aeronave.horimetroAeronave
-            LOG.info("horimetro=$horimetro")
-            val horimetroAtualizado = AeronaveHorimetro(
-                totalVoo = horimetroParaAdicionar.totalVoo + (horimetro?.totalVoo ?: BigDecimal.ZERO),
-                totalManutencao = horimetroParaAdicionar.totalManutencao + (horimetro?.totalManutencao ?: BigDecimal.ZERO)
-            )
+                ?: AeronaveHorimetro(ZERO, ZERO)
+            LOG.info("horimetro atual=$horimetro")
+            val horimetroAtualizado = horimetro + horimetroParaAdicionar
             LOG.info("horimetro atualizado=$horimetroAtualizado")
             aeronaveGateway.salvarHorimetro(aeronaveId, horimetroAtualizado).takeIf { it }?.run {
                 horimetroAtualizado

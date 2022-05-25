@@ -9,7 +9,13 @@ data class AeronaveHorimetro(
 ) {
     val totalVooEmHoras = totalVoo.converteParaHoras()
     val totalManutencaoEmHoras = totalManutencao.converteParaHoras()
+
     override fun toString(): String {
         return "AeronaveHorimetro(totalVoo=$totalVoo, totalManutencao=$totalManutencao, totalVooEmHoras=$totalVooEmHoras, totalManutencaoEmHoras=$totalManutencaoEmHoras)"
     }
+
+    operator fun plus(horimetroParaAdicionar: AeronaveHorimetro) = AeronaveHorimetro(
+        totalVoo = totalVoo + horimetroParaAdicionar.totalVoo,
+        totalManutencao = totalManutencao + horimetroParaAdicionar.totalManutencao
+    )
 }

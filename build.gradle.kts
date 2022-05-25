@@ -85,7 +85,7 @@ tasks.compileKotlin {
 
 ktlint {
     filter {
-        exclude("**/generated/**")
+        exclude("**/generated/src/main/kotlin/br/gov/ma/ctamanagerservice/adapters/api/*")
     }
 }
 
@@ -118,5 +118,8 @@ tasks.openApiGenerate {
             "exceptionHandler" to "false"
         )
     )
-    mustRunAfter("runKtlintCheckOverMainSourceSet")
+    mustRunAfter(
+        "runKtlintCheckOverMainSourceSet",
+        "ktlintMainSourceSetCheck"
+    )
 }

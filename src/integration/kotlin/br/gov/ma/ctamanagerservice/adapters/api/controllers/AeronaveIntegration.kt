@@ -2,10 +2,8 @@ package br.gov.ma.ctamanagerservice.adapters.api.controllers
 
 import br.gov.ma.ctamanagerservice.BaseIntegrationTest
 import br.gov.ma.ctamanagerservice.IntegrationUtils.PATH_AERONAVE
-import br.gov.ma.ctamanagerservice.IntegrationUtils.PATH_FABRICANTE
 import br.gov.ma.ctamanagerservice.adapters.dto.AeronaveDto
-import br.gov.ma.ctamanagerservice.adapters.dto.AeronaveRequestDto
-import br.gov.ma.ctamanagerservice.adapters.dto.FabricanteDto
+import br.gov.ma.ctamanagerservice.adapters.dto.HorimetroDto
 import br.gov.ma.ctamanagerservice.adapters.ext.toDto
 import br.gov.ma.ctamanagerservice.domain.entities.Aeronave
 import br.gov.ma.ctamanagerservice.domain.entities.CategoriaRegistro
@@ -14,13 +12,9 @@ import br.gov.ma.ctamanagerservice.domain.gateways.AeronaveGateway
 import br.gov.ma.ctamanagerservice.domain.gateways.FabricanteGateway
 import br.gov.ma.ctamanagerservice.factories.toRequestDto
 import br.gov.ma.ctamanagerservice.factories.umFabricante
+import br.gov.ma.ctamanagerservice.factories.umHorimetro
 import br.gov.ma.ctamanagerservice.factories.umaAeronave
-import io.restassured.http.ContentType
-import io.restassured.module.kotlin.extensions.Given
-import io.restassured.module.kotlin.extensions.Then
-import io.restassured.module.kotlin.extensions.When
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,6 +28,7 @@ import org.springframework.http.HttpStatus
 internal class AeronaveIntegration : BaseIntegrationTest() {
     @Autowired
     private lateinit var fabricanteGateway: FabricanteGateway
+
     @Autowired
     private lateinit var aeronaveGateway: AeronaveGateway
 
@@ -66,7 +61,7 @@ internal class AeronaveIntegration : BaseIntegrationTest() {
 
     @Test
     fun `QUANDO enviar PUT com nome atualizado, DEVE retornar 200_OK com aeronave atualizada`() {
-        val aeronave = aeronaveGateway.salvar(umaAeronave(0L, fabricante = FABRICANTE))
+        val aeronave = umaAeronave(0L, fabricante = FABRICANTE).let { aeronaveGateway.salvar(it) }
         val aeronaveEditada = aeronave.copy(
             apelido = "NOVA AGUIA",
             categoria = CategoriaRegistro.TPX,
@@ -88,7 +83,7 @@ internal class AeronaveIntegration : BaseIntegrationTest() {
 
     @Test
     fun `DADO um ID QUANDO enviar GET com ID no parametro, DEVE retornar 200_OK e a aeronave encontrada`() {
-        val aeronave = aeronaveGateway.salvar(umaAeronave(0L, fabricante = FABRICANTE))
+        val aeronave = umaAeronave(0L, fabricante = FABRICANTE).let { aeronaveGateway.salvar(it) }
         val response = client.getForEntity<AeronaveDto>("$PATH_AERONAVE/${aeronave.id}")
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.body).isEqualTo(aeronave.toDto())
@@ -102,12 +97,11 @@ internal class AeronaveIntegration : BaseIntegrationTest() {
 
     @Test
     fun `QUANDO enviar GET, DEVE retornar 200_OK e todos as aeronaves cadastradas`() {
-        val aeronaves = aeronaveGateway.run {
-            listOf(
-                salvar(umaAeronave(0L, "FALCAO", fabricante = FABRICANTE)),
-                salvar(umaAeronave(0L, "ASA NOTURNO", fabricante = FABRICANTE))
-            )
-        }
+        val aeronaves = listOf(
+            umaAeronave(0L, "FALCAO", fabricante = FABRICANTE),
+            umaAeronave(0L, "ASA NOTURNO", fabricante = FABRICANTE)
+        ).map { aeronaveGateway.salvar(it) }
+
         val response = client.exchange<List<AeronaveDto>>(
             url = PATH_AERONAVE,
             method = HttpMethod.GET
@@ -119,10 +113,30 @@ internal class AeronaveIntegration : BaseIntegrationTest() {
     }
 
     @Test
-    fun `DADO uma aeronave com horimetro, QUANDO enviar um horimetro para adicionar, deve retornar 200_OK com o horimetro atualizado`() {
+    fun `DADO uma aeronave sem horimetro, QUANDO enviar um horimetro para adicionar, deve retornar 200_OK com o horimetro criado`() {
+        val aeronave = umaAeronave(0L, fabricante = FABRICANTE).let {
+            aeronaveGateway.salvar(it)
+        }
+        val horimetro = umHorimetro()
+        val response = client.postForEntity<HorimetroDto>("$PATH_AERONAVE/${aeronave.id}/horimetro", horimetro.toDto())
+        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(response.body).isNotNull
+        assertThat(response.body).isEqualTo(horimetro.toDto())
     }
 
     @Test
-    fun `DADO uma aeronave sem horimetro, QUANDO enviar um horimetro para adicionar, deve retornar 200_OK com o horimetro criado`() {
+    fun `DADO uma aeronave com horimetro, QUANDO enviar um horimetro para adicionar, deve retornar 200_OK com o horimetro atualizado`() {
+        val aeronave = umaAeronave(0L, fabricante = FABRICANTE).let {
+            aeronaveGateway.salvar(it)
+        }
+        val horimetroInicial = umHorimetro().also {
+            aeronaveGateway.salvarHorimetro(aeronave.id, it)
+        }
+        val horimetroParaAdicionar = umHorimetro()
+        val horimetroEsperado = horimetroInicial + horimetroParaAdicionar
+        val response = client.postForEntity<HorimetroDto>("$PATH_AERONAVE/${aeronave.id}/horimetro", horimetroParaAdicionar.toDto())
+        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(response.body).isNotNull
+        assertThat(response.body).isEqualTo(horimetroEsperado.toDto())
     }
 }

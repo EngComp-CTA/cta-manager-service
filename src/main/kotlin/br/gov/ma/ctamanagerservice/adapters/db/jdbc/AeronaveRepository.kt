@@ -25,7 +25,7 @@ interface AeronaveRepository : PagingAndSortingRepository<AeronaveTable, Long> {
     fun updateAeronaveHorimetro(aeronaveId: Long, totalVoo: BigDecimal, totalManutencao: BigDecimal): Boolean
 
     @Modifying
-    @Query("INSERT INTO $AERONAVE_HORIMETRO_TABLE (aeronave_id, total_voo, total_manutencao, atualizado_em) VALUES(:aeronaveId, :tototalVoo, :totalManutencao, now())")
+    @Query("INSERT INTO $AERONAVE_HORIMETRO_TABLE (aeronave_id, total_voo, total_manutencao, atualizado_em) VALUES(:aeronaveId, :totalVoo, :totalManutencao, now())")
     fun insertAeronaveHorimetro(aeronaveId: Long, totalVoo: BigDecimal, totalManutencao: BigDecimal): Boolean
 }
 
