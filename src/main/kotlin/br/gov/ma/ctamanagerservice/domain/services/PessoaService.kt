@@ -4,7 +4,9 @@ import br.gov.ma.ctamanagerservice.domain.entities.Pessoa
 import br.gov.ma.ctamanagerservice.domain.exceptions.NaoEncontradoException
 import br.gov.ma.ctamanagerservice.domain.gateways.PessoaGateway
 import br.gov.ma.ctamanagerservice.util.WithLogging
+import org.springframework.stereotype.Service
 
+@Service
 class PessoaService(
     private val pessoaGateway: PessoaGateway
 ) : WithLogging() {
@@ -28,7 +30,7 @@ class PessoaService(
         } ?: throw NaoEncontradoException(mensagem = "Pessoa não encontrada")
     }
 
-    fun recuperarTudo(nome: String?, cpf: String?): List<Pessoa> {
+    fun recuperarTudo(nome: String? = null, cpf: String? = null): List<Pessoa> {
         LOG.info("recuperando todas as pessoas por filtro")
         return cpf?.let {
             LOG.info("recuperando pessoa por cpf=$it")

@@ -52,7 +52,7 @@ data class AeronaveTable(
     @Column private val numeroSerie: Int,
     @Column private val categoriaRegistro: String
 ) {
-    fun toDomain(getFabricante: (idFabricante: Long) -> Fabricante) = Aeronave(
+    fun toDomain(getFabricante: (Long) -> Fabricante) = Aeronave(
         id = id,
         apelido = apelido,
         marcas = Marcas.from(marcas),

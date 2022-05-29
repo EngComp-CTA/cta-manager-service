@@ -1,8 +1,10 @@
 package br.gov.ma.ctamanagerservice
 
+import br.gov.ma.ctamanagerservice.adapters.db.jdbc.AERONAUTA_TABLE
 import br.gov.ma.ctamanagerservice.adapters.db.jdbc.AERONAVE_HORIMETRO_TABLE
 import br.gov.ma.ctamanagerservice.adapters.db.jdbc.AERONAVE_TABLE
 import br.gov.ma.ctamanagerservice.adapters.db.jdbc.FABRICANTE_TABLE
+import br.gov.ma.ctamanagerservice.adapters.db.jdbc.PESSOA_TABLE
 import io.restassured.RestAssured
 import io.restassured.config.LogConfig
 import io.restassured.config.RestAssuredConfig
@@ -30,7 +32,7 @@ abstract class BaseIntegrationTest {
     @BeforeEach
     fun setup() {
         deleteFromTables(
-            jdbc, AERONAVE_HORIMETRO_TABLE, AERONAVE_TABLE, FABRICANTE_TABLE
+            jdbc, AERONAVE_HORIMETRO_TABLE, AERONAVE_TABLE, FABRICANTE_TABLE, AERONAUTA_TABLE, PESSOA_TABLE
         )
         RestAssured.port = port
         RestAssured.config = RestAssuredConfig

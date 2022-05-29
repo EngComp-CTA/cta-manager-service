@@ -42,8 +42,11 @@ create table if not exists pessoa
         constraint pessoa_pk
             primary key,
     cpf  varchar(11) not null,
-    nome varchar(50) not null
+    nome varchar(50) not null,
+    telefone varchar(11)
 );
+create unique index if not exists pessoa_cpf_uindex
+    on pessoa (cpf);
 
 create table if not exists aeronauta
 (

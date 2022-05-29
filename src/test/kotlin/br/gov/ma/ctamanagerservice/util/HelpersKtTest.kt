@@ -13,7 +13,7 @@ internal class HelpersKtTest {
     @MethodSource("valores")
     fun `QUANDO o valor do inteiro for menor que 10 DEVE formatar com 0 a esquerda`(valor: Int, resultado: String) {
         assertThat(valor.formataComZero())
-                .isEqualTo(resultado)
+            .isEqualTo(resultado)
     }
 
     @Test

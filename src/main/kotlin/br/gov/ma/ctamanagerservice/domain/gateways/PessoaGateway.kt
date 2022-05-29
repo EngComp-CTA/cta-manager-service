@@ -7,5 +7,5 @@ interface PessoaGateway {
     fun encontrarPorId(id: Long): Pessoa?
     fun encontrarPorCpf(cpf: String): Pessoa?
     fun encontrarPorNome(nome: String): List<Pessoa>
-    fun salvar(aeronave: Pessoa): Pessoa
+    fun salvar(pessoa: Pessoa): Pessoa
 }

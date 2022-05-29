@@ -286,6 +286,11 @@ paths:
           schema:
             type: string
           description: Buscar aeronauta pelo cpf
+        - in: query
+          name: nome
+          schema:
+            type: string
+          description: Buscar aeronauta pelo nome
       responses:
         '200':
           description: Sucesso
@@ -405,6 +410,9 @@ components:
         categoria_registro:
           type: string
           example: SAE
+        teste:
+          type: string
+          enum: [SAE, TPX]
     Error:
       properties:
         code:
@@ -456,6 +464,9 @@ components:
         nome:
           type: string
           example: Rogerio Cabral
+        telefone:
+          type: string
+          example: 98988112233
     Aeronauta:
       required:
         - pessoa
@@ -470,6 +481,17 @@ components:
         codigo_anac:
           type: integer
           example: 10686
+    AeronautaRequest:
+      required:
+        - cpf
+        - codigo_anac
+      properties:
+        codigo_anac:
+          type: integer
+          example: 10686
+        cpf:
+          type: string
+          example: 93226553054
   requestBodies:
     FabricanteBody:
       required: true
@@ -500,7 +522,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Aeronauta'
+            $ref: '#/components/schemas/AeronautaRequest'
   responses:
     NotFound:
       description: Não encontrado

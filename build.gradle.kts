@@ -4,10 +4,9 @@ plugins {
     id("org.springframework.boot") version "2.6.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.openapi.generator") version "5.3.0"
-//    id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
     id("com.coditory.integration-test") version "1.3.0"
 //    id("io.gitlab.arturbosch.detekt") version "1.20.0"
-    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
+    id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
 
     kotlin("jvm") version "1.5.21"
     kotlin("plugin.spring") version "1.5.21"
@@ -84,6 +83,7 @@ tasks.compileKotlin {
 }
 
 ktlint {
+//    verbose = false
     filter {
         exclude("**/generated/src/main/kotlin/br/gov/ma/ctamanagerservice/adapters/api/*")
     }
@@ -103,8 +103,19 @@ sourceSets {
 tasks.openApiValidate {
     inputSpec.set(pathSwagger)
 }
-
 tasks.openApiGenerate {
+    mustRunAfter(
+        "runKtlintCheckOverMainSourceSet"
+    )
+}
+
+val excludePackages = listOf(
+    "**/br/gov/ma/ctamanagerservice/adapters/api/*",
+    "**/br/gov/ma/ctamanagerservice/adapters/dto/*",
+)
+extra["excludePackages"] = excludePackages
+
+openApiGenerate {
     generatorName.set("kotlin-spring")
     inputSpec.set(pathSwagger)
     outputDir.set("$buildDir/generated")
@@ -115,11 +126,8 @@ tasks.openApiGenerate {
         mapOf(
             "interfaceOnly" to "true",
             "gradleBuildFile" to "false",
-            "exceptionHandler" to "false"
+            "exceptionHandler" to "false",
+            "enumPropertyNaming" to "UPPERCASE"
         )
-    )
-    mustRunAfter(
-        "runKtlintCheckOverMainSourceSet",
-        "ktlintMainSourceSetCheck"
     )
 }

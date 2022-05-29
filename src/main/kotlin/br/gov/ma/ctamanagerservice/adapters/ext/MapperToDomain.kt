@@ -36,7 +36,8 @@ fun FabricanteDto.toDomain() = Fabricante(
 fun PessoaDto.toDomain() = Pessoa(
     id = 0L,
     nome = nome,
-    cpf = cpf
+    cpf = cpf,
+    telefone = telefone
 )
 
 fun AeronautaDto.toDomain() = Aeronauta(

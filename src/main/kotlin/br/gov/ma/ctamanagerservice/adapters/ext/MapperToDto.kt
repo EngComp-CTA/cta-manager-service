@@ -36,7 +36,8 @@ fun Fabricante.toDto() = FabricanteDto(
 fun Pessoa.toDto() = PessoaDto(
     id = id,
     cpf = cpf,
-    nome = nome
+    nome = nome,
+    telefone = telefone
 )
 
 fun Aeronauta.toDto() = AeronautaDto(
