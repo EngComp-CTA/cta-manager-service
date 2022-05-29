@@ -33,8 +33,8 @@ class AeronautaService(
         } ?: throw NaoEncontradoException(mensagem = "Aeronauta não encontrado")
     }
 
-    fun recuperarTudo(codigoAnac: Int?, cpf: String?, nome: String?): List<Aeronauta> {
-        LOG.info("recuperando aeronautas com o filtro { codigoAnac=$codigoAnac, cpf=$cpf, $nome=nome }")
+    fun recuperarTudo(codigoAnac: Int? = null, cpf: String? = null, nome: String? = null): List<Aeronauta> {
+        LOG.info("recuperando aeronautas com o filtro { codigoAnac=$codigoAnac, cpf=$cpf, nome=$nome }")
         val aeronauta = codigoAnac?.let {
             aeronautaGateway.encontrarPorCodigoAnac(it)
         } ?: recuperarAeronautaPorPessoa(cpf, nome)
