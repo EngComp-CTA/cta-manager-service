@@ -62,3 +62,13 @@ comment on table aeronauta is 'candidato ou profissional relacionado a aviação
 comment on column aeronauta.canac is 'codigo anac - identificacao na anac';
 create unique index if not exists aeronauta_anac_uindex
     on aeronauta (canac);
+
+create table if not exists local
+(
+    id   serial
+        constraint local_pk
+            primary key,
+    nome varchar(25) not null,
+    codigo_oaci varchar(10) not null
+);
+comment on table local is 'registro de base aérea';

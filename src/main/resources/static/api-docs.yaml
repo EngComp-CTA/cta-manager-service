@@ -337,6 +337,96 @@ paths:
                 $ref: '#/components/schemas/Aeronauta'
         404:
           $ref: '#/components/responses/NotFound'
+
+  /local:
+    get:
+      summary: Buscar todas as bases
+      operationId: buscarLocais
+      tags:
+        - Cadastro
+      parameters:
+        - in: query
+          name: nome
+          schema:
+            type: string
+          description: Buscar base pelo nome
+        - in: query
+          name: codigo_oaci
+          schema:
+            type: string
+          description: Buscar base pelo código OACI
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Local'
+    post:
+      summary: Adicionar uma base
+      operationId: adicionarLocal
+      requestBody:
+        $ref: '#/components/requestBodies/LocalBody'
+      tags:
+        - Cadastro
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Local'
+  /local/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID da base
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Cadastro
+      summary: Buscar uma base por Id
+      operationId: buscarLocalPorId
+      responses:
+        200:
+          description: Base encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Local'
+        404:
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Atualizar uma base
+      operationId: atualizarLocal
+      tags:
+        - Cadastro
+      requestBody:
+        $ref: '#/components/requestBodies/LocalBody'
+      responses:
+        200:
+          description: Atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Local'
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Remover uma base por Id
+      operationId: removerLocal
+      tags:
+        - Cadastro
+      responses:
+        204:
+          description: Base removida com sucesso
+        404:
+          $ref: '#/components/responses/NotFound'
 components:
   schemas:
     Fabricante:
@@ -467,6 +557,32 @@ components:
         telefone:
           type: string
           example: 98988112233
+    Local:
+      required:
+        - codigo_oaci
+        - nome
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        codigo_oaci:
+          type: string
+          example: SWLW
+        nome:
+          type: string
+          example: São Luís (MA)
+    LocalRequest:
+      required:
+        - nome
+        - codigo_oaci
+      properties:
+        codigo_oaci:
+          type: string
+          example: SWLW
+        nome:
+          type: string
+          example: São Luís (MA)
     Aeronauta:
       required:
         - pessoa
@@ -517,6 +633,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Pessoa'
+    LocalBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LocalRequest'
     AeronautaBody:
       required: true
       content:
